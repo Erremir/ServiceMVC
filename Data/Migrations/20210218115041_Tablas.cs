@@ -3,17 +3,16 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ServiceMVC.Data.Migrations
 {
-    public partial class NuevasTablas : Migration
+    public partial class Tablas : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "FirstName",
-                table: "AspNetUsers");
-
-            migrationBuilder.DropColumn(
-                name: "LastName",
-                table: "AspNetUsers");
+            migrationBuilder.AddColumn<string>(
+                name: "Discriminator",
+                table: "AspNetUsers",
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "");
 
             migrationBuilder.CreateTable(
                 name: "ArancelTiempos",
@@ -95,18 +94,24 @@ namespace ServiceMVC.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "rankingUsuarios",
+                name: "RankingUsuarios",
                 columns: table => new
                 {
                     RankingUsuarioID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UsuarioID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UsuarioID = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     EnProceso = table.Column<int>(type: "int", nullable: false),
                     Solucionados = table.Column<int>(type: "int", nullable: false),
                     Fallados = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_rankingUsuarios", x => x.RankingUsuarioID);
+                    table.PrimaryKey("PK_RankingUsuarios", x => x.RankingUsuarioID);
+                    table.ForeignKey(
+                        name: "FK_RankingUsuarios_AspNetUsers_UsuarioID",
+                        column: x => x.UsuarioID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -114,7 +119,7 @@ namespace ServiceMVC.Data.Migrations
                 columns: table => new
                 {
                     SolucionID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -167,6 +172,31 @@ namespace ServiceMVC.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Servicios",
+                columns: table => new
+                {
+                    ServicioID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EquipoID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FechaIng = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FechaEgr = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TiempoTrabajo = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    UnidadesTrabajo = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Total = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Solucionado = table.Column<bool>(type: "bit", nullable: false),
+                    ClienteID = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Servicios", x => x.ServicioID);
+                    table.ForeignKey(
+                        name: "FK_Servicios_Clientes_ClienteID",
+                        column: x => x.ClienteID,
+                        principalTable: "Clientes",
+                        principalColumn: "ClienteID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ProbxDiags",
                 columns: table => new
                 {
@@ -212,7 +242,7 @@ namespace ServiceMVC.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "diagxSoles",
+                name: "DiagxSoles",
                 columns: table => new
                 {
                     DiagxSolID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -221,81 +251,18 @@ namespace ServiceMVC.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_diagxSoles", x => x.DiagxSolID);
+                    table.PrimaryKey("PK_DiagxSoles", x => x.DiagxSolID);
                     table.ForeignKey(
-                        name: "FK_diagxSoles_Diagnosticos_DiagnosticoID",
+                        name: "FK_DiagxSoles_Diagnosticos_DiagnosticoID",
                         column: x => x.DiagnosticoID,
                         principalTable: "Diagnosticos",
                         principalColumn: "DiagnosticoID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_diagxSoles_Soluciones_SolucionID",
+                        name: "FK_DiagxSoles_Soluciones_SolucionID",
                         column: x => x.SolucionID,
                         principalTable: "Soluciones",
                         principalColumn: "SolucionID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Servicios",
-                columns: table => new
-                {
-                    ServicioID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EquipoID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UsuarioID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FechaIng = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FechaEgr = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TiempoTrabajo = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    UnidadesTrabajo = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Total = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Solucionado = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Servicios", x => x.ServicioID);
-                    table.ForeignKey(
-                        name: "FK_Servicios_Equipos_EquipoID",
-                        column: x => x.EquipoID,
-                        principalTable: "Equipos",
-                        principalColumn: "EquipoID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "rankingDiags",
-                columns: table => new
-                {
-                    RankingDiagID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProbxDiagID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Total = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_rankingDiags", x => x.RankingDiagID);
-                    table.ForeignKey(
-                        name: "FK_rankingDiags_ProbxDiags_ProbxDiagID",
-                        column: x => x.ProbxDiagID,
-                        principalTable: "ProbxDiags",
-                        principalColumn: "ProbxDiagID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "rankingSoles",
-                columns: table => new
-                {
-                    RankingSolID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DiagxSolID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Total = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_rankingSoles", x => x.RankingSolID);
-                    table.ForeignKey(
-                        name: "FK_rankingSoles_diagxSoles_DiagxSolID",
-                        column: x => x.DiagxSolID,
-                        principalTable: "diagxSoles",
-                        principalColumn: "DiagxSolID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -338,19 +305,83 @@ namespace ServiceMVC.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ServxUsuarios",
+                columns: table => new
+                {
+                    ServcUsuarioID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UsuarioID = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ServicioID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Status = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ServxUsuarios", x => x.ServcUsuarioID);
+                    table.ForeignKey(
+                        name: "FK_ServxUsuarios_AspNetUsers_UsuarioID",
+                        column: x => x.UsuarioID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ServxUsuarios_Servicios_ServicioID",
+                        column: x => x.ServicioID,
+                        principalTable: "Servicios",
+                        principalColumn: "ServicioID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RankingDiags",
+                columns: table => new
+                {
+                    RankingDiagID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProbxDiagID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Total = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RankingDiags", x => x.RankingDiagID);
+                    table.ForeignKey(
+                        name: "FK_RankingDiags_ProbxDiags_ProbxDiagID",
+                        column: x => x.ProbxDiagID,
+                        principalTable: "ProbxDiags",
+                        principalColumn: "ProbxDiagID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RankingSoles",
+                columns: table => new
+                {
+                    RankingSolID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DiagxSolID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Total = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RankingSoles", x => x.RankingSolID);
+                    table.ForeignKey(
+                        name: "FK_RankingSoles_DiagxSoles_DiagxSolID",
+                        column: x => x.DiagxSolID,
+                        principalTable: "DiagxSoles",
+                        principalColumn: "DiagxSolID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Costos_SolucionID",
                 table: "Costos",
                 column: "SolucionID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_diagxSoles_DiagnosticoID",
-                table: "diagxSoles",
+                name: "IX_DiagxSoles_DiagnosticoID",
+                table: "DiagxSoles",
                 column: "DiagnosticoID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_diagxSoles_SolucionID",
-                table: "diagxSoles",
+                name: "IX_DiagxSoles_SolucionID",
+                table: "DiagxSoles",
                 column: "SolucionID");
 
             migrationBuilder.CreateIndex(
@@ -399,19 +430,34 @@ namespace ServiceMVC.Data.Migrations
                 column: "ClienteID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_rankingDiags_ProbxDiagID",
-                table: "rankingDiags",
+                name: "IX_RankingDiags_ProbxDiagID",
+                table: "RankingDiags",
                 column: "ProbxDiagID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_rankingSoles_DiagxSolID",
-                table: "rankingSoles",
+                name: "IX_RankingSoles_DiagxSolID",
+                table: "RankingSoles",
                 column: "DiagxSolID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Servicios_EquipoID",
+                name: "IX_RankingUsuarios_UsuarioID",
+                table: "RankingUsuarios",
+                column: "UsuarioID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Servicios_ClienteID",
                 table: "Servicios",
-                column: "EquipoID");
+                column: "ClienteID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ServxUsuarios_ServicioID",
+                table: "ServxUsuarios",
+                column: "ServicioID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ServxUsuarios_UsuarioID",
+                table: "ServxUsuarios",
+                column: "UsuarioID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -426,31 +472,37 @@ namespace ServiceMVC.Data.Migrations
                 name: "Costos");
 
             migrationBuilder.DropTable(
+                name: "Equipos");
+
+            migrationBuilder.DropTable(
                 name: "ProbDiagSoles");
 
             migrationBuilder.DropTable(
                 name: "RankingClientess");
 
             migrationBuilder.DropTable(
-                name: "rankingDiags");
+                name: "RankingDiags");
 
             migrationBuilder.DropTable(
-                name: "rankingSoles");
+                name: "RankingSoles");
 
             migrationBuilder.DropTable(
-                name: "rankingUsuarios");
+                name: "RankingUsuarios");
 
             migrationBuilder.DropTable(
-                name: "Servicios");
+                name: "ServxUsuarios");
+
+            migrationBuilder.DropTable(
+                name: "CategoriaEquipos");
 
             migrationBuilder.DropTable(
                 name: "ProbxDiags");
 
             migrationBuilder.DropTable(
-                name: "diagxSoles");
+                name: "DiagxSoles");
 
             migrationBuilder.DropTable(
-                name: "Equipos");
+                name: "Servicios");
 
             migrationBuilder.DropTable(
                 name: "Problemas");
@@ -462,24 +514,11 @@ namespace ServiceMVC.Data.Migrations
                 name: "Soluciones");
 
             migrationBuilder.DropTable(
-                name: "CategoriaEquipos");
-
-            migrationBuilder.DropTable(
                 name: "Clientes");
 
-            migrationBuilder.AddColumn<string>(
-                name: "FirstName",
-                table: "AspNetUsers",
-                type: "nvarchar(256)",
-                maxLength: 256,
-                nullable: true);
-
-            migrationBuilder.AddColumn<string>(
-                name: "LastName",
-                table: "AspNetUsers",
-                type: "nvarchar(256)",
-                maxLength: 256,
-                nullable: true);
+            migrationBuilder.DropColumn(
+                name: "Discriminator",
+                table: "AspNetUsers");
         }
     }
 }

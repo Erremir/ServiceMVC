@@ -14,23 +14,23 @@ namespace ServiceMVC.Data
         {
         }
 
-        public virtual DbSet<ArancelTiempo> ArancelTiempos  { get; set; }
-        public virtual DbSet<ArancelUnidad> ArancelUnidades { get; set; }
-        public virtual DbSet<CategoriaEquipo> CategoriaEquipos { get; set; }
-
-        public virtual DbSet<Cliente> Clientes { get; set; }
-        public virtual DbSet<Costo> Costos { get; set; }
-        public virtual DbSet<Diagnostico> Diagnosticos { get; set; }
-        public virtual DbSet<DiagxSol> diagxSoles { get; set; }
-        public virtual DbSet<Equipo> Equipos { get; set; }
-        public virtual DbSet<ProbDiagSol> ProbDiagSoles { get; set; }
-        public virtual DbSet<Problema> Problemas { get; set; }
-        public virtual DbSet<ProbxDiag> ProbxDiags { get; set; }
-        public virtual DbSet<RankingClientes> RankingClientess { get; set; }
-        public virtual DbSet<RankingDiag> rankingDiags { get; set; }
-        public virtual DbSet<RankingSol> rankingSoles { get; set; }
-        public virtual DbSet<RankingUsuario> rankingUsuarios { get; set; }
-        public virtual DbSet<Servicio> Servicios { get; set; }
-        public virtual DbSet<Solucion> Soluciones { get; set; }
+        public DbSet<ArancelTiempo> ArancelTiempos  { get; set; }
+        public DbSet<ArancelUnidad> ArancelUnidades { get; set; }
+        public DbSet<CategoriaEquipo> CategoriaEquipos { get; set; }
+        public DbSet<Cliente> Clientes { get; set; }
+        public DbSet<Costo> Costos { get; set; }
+        public DbSet<Diagnostico> Diagnosticos { get; set; }
+        public DbSet<DiagxSol> DiagxSoles { get; set; }
+        public DbSet<Equipo> Equipos { get; set; }
+        public DbSet<ProbDiagSol> ProbDiagSoles { get; set; }
+        public DbSet<Problema> Problemas { get; set; }
+        public DbSet<ProbxDiag> ProbxDiags { get; set; }
+        public DbSet<RankingClientes> RankingClientess { get; set; }
+        public DbSet<RankingDiag> RankingDiags { get; set; }
+        public DbSet<RankingSol> RankingSoles { get; set; }
+        public DbSet<RankingUsuario> RankingUsuarios { get; set; }
+        public DbSet<Servicio> Servicios { get; set; }
+        public DbSet<Solucion> Soluciones { get; set; }
+        public DbSet<ServxUsuario> ServxUsuarios { get; set; }
     }
 }

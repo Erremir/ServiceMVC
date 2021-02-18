@@ -82,6 +82,10 @@ namespace ServiceMVC.Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -133,6 +137,8 @@ namespace ServiceMVC.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -350,7 +356,7 @@ namespace ServiceMVC.Data.Migrations
 
                     b.HasIndex("SolucionID");
 
-                    b.ToTable("diagxSoles");
+                    b.ToTable("DiagxSoles");
                 });
 
             modelBuilder.Entity("ServiceMVC.Models.Equipo", b =>
@@ -478,7 +484,7 @@ namespace ServiceMVC.Data.Migrations
 
                     b.HasIndex("ProbxDiagID");
 
-                    b.ToTable("rankingDiags");
+                    b.ToTable("RankingDiags");
                 });
 
             modelBuilder.Entity("ServiceMVC.Models.RankingSol", b =>
@@ -497,7 +503,7 @@ namespace ServiceMVC.Data.Migrations
 
                     b.HasIndex("DiagxSolID");
 
-                    b.ToTable("rankingSoles");
+                    b.ToTable("RankingSoles");
                 });
 
             modelBuilder.Entity("ServiceMVC.Models.RankingUsuario", b =>
@@ -515,18 +521,23 @@ namespace ServiceMVC.Data.Migrations
                     b.Property<int>("Solucionados")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("UsuarioID")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("UsuarioID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("RankingUsuarioID");
 
-                    b.ToTable("rankingUsuarios");
+                    b.HasIndex("UsuarioID");
+
+                    b.ToTable("RankingUsuarios");
                 });
 
             modelBuilder.Entity("ServiceMVC.Models.Servicio", b =>
                 {
                     b.Property<Guid>("ServicioID")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ClienteID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("EquipoID")
@@ -550,14 +561,35 @@ namespace ServiceMVC.Data.Migrations
                     b.Property<decimal>("UnidadesTrabajo")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("UsuarioID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("ServicioID");
 
-                    b.HasIndex("EquipoID");
+                    b.HasIndex("ClienteID");
 
                     b.ToTable("Servicios");
+                });
+
+            modelBuilder.Entity("ServiceMVC.Models.ServxUsuario", b =>
+                {
+                    b.Property<Guid>("ServcUsuarioID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ServicioID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UsuarioID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ServcUsuarioID");
+
+                    b.HasIndex("ServicioID");
+
+                    b.HasIndex("UsuarioID");
+
+                    b.ToTable("ServxUsuarios");
                 });
 
             modelBuilder.Entity("ServiceMVC.Models.Solucion", b =>
@@ -567,11 +599,19 @@ namespace ServiceMVC.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Descripcion")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("SolucionID");
 
                     b.ToTable("Soluciones");
+                });
+
+            modelBuilder.Entity("ServiceMVC.Models.ApplicationUser", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
+
+                    b.HasDiscriminator().HasValue("ApplicationUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -761,15 +801,39 @@ namespace ServiceMVC.Data.Migrations
                     b.Navigation("DiagxSol");
                 });
 
+            modelBuilder.Entity("ServiceMVC.Models.RankingUsuario", b =>
+                {
+                    b.HasOne("ServiceMVC.Models.ApplicationUser", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioID");
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("ServiceMVC.Models.Servicio", b =>
                 {
-                    b.HasOne("ServiceMVC.Models.Equipo", "Equipo")
+                    b.HasOne("ServiceMVC.Models.Cliente", "Cliente")
                         .WithMany()
-                        .HasForeignKey("EquipoID")
+                        .HasForeignKey("ClienteID");
+
+                    b.Navigation("Cliente");
+                });
+
+            modelBuilder.Entity("ServiceMVC.Models.ServxUsuario", b =>
+                {
+                    b.HasOne("ServiceMVC.Models.Servicio", "Servicio")
+                        .WithMany()
+                        .HasForeignKey("ServicioID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Equipo");
+                    b.HasOne("ServiceMVC.Models.ApplicationUser", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioID");
+
+                    b.Navigation("Servicio");
+
+                    b.Navigation("Usuario");
                 });
 #pragma warning restore 612, 618
         }
