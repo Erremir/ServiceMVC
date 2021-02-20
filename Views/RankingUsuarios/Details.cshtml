@@ -1,0 +1,42 @@
+﻿@model ServiceMVC.Models.RankingUsuario
+
+@{
+    ViewData["Title"] = "Detalles";
+}
+
+<h1>Detalles</h1>
+
+<div>
+    <h4>Ranking Usuario</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EnProceso)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.EnProceso)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Solucionados)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Solucionados)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Fallados)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Fallados)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Usuario)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Usuario.Id)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.RankingUsuarioID">Editar</a> |
+    <a asp-action="Index">Volver</a>
+</div>

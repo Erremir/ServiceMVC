@@ -1,0 +1,53 @@
+﻿@model IEnumerable<ServiceMVC.Models.ProbDiagSol>
+
+@{
+    ViewData["Title"] = "Problemas - Diagnosticos - Soluciones";
+}
+
+<h1>Problemas - Diagnosticos - Soluciones</h1>
+
+<p>
+    <a asp-action="Create">Nuevo</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Servicio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Problema)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Diagnostico)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Solucion)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Servicio.ServicioID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Problema.ProblemaID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Diagnostico.DiagnosticoID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Solucion.Descripcion)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ProbDiagSolID">Editar</a> |
+                <a asp-action="Details" asp-route-id="@item.ProbDiagSolID">Detalles</a> |
+                <a asp-action="Delete" asp-route-id="@item.ProbDiagSolID">Eliminar</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

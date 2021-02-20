@@ -1,0 +1,33 @@
+﻿@model ServiceMVC.Models.ProbxDiag
+
+@{
+    ViewData["Title"] = "Eliminar";
+}
+
+<h1>Eliminar</h1>
+
+<h3>Está seguro de que desea eliminarlo?</h3>
+<div>
+    <h4>Problema x Diagnostico</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Problema)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Problema.ProblemaID)
+        </dd class>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Diagnostico)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Diagnostico.DiagnosticoID)
+        </dd class>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="ProbxDiagID" />
+        <input type="submit" value="Eliminar" class="btn btn-danger" /> |
+        <a asp-action="Index">Volver</a>
+    </form>
+</div>

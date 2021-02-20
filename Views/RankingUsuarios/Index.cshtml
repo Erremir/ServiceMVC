@@ -1,0 +1,53 @@
+﻿@model IEnumerable<ServiceMVC.Models.RankingUsuario>
+
+@{
+    ViewData["Title"] = "Ranking Usuarios";
+}
+
+<h1>Ranking Usuarios</h1>
+
+<p>
+    <a asp-action="Create">Nuevo</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.EnProceso)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Solucionados)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Fallados)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Usuario)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.EnProceso)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Solucionados)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Fallados)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Usuario.Id)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.RankingUsuarioID">Editar</a> |
+                <a asp-action="Details" asp-route-id="@item.RankingUsuarioID">Detalles</a> |
+                <a asp-action="Delete" asp-route-id="@item.RankingUsuarioID">Eliminar</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

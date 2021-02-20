@@ -1,0 +1,41 @@
+﻿@model IEnumerable<ServiceMVC.Models.ProbxDiag>
+
+@{
+    ViewData["Title"] = "Problema x Diagnostico";
+}
+
+<h1>Problema x Diagnostico</h1>
+
+<p>
+    <a asp-action="Create">Nuevo</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Problema)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Diagnostico)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Problema.ProblemaID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Diagnostico.DiagnosticoID)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ProbxDiagID">Editar</a> |
+                <a asp-action="Details" asp-route-id="@item.ProbxDiagID">Detalles</a> |
+                <a asp-action="Delete" asp-route-id="@item.ProbxDiagID">Eliminar</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,30 @@
+﻿@model ServiceMVC.Models.RankingDiag
+
+@{
+    ViewData["Title"] = "Detalles";
+}
+
+<h1>Detalles</h1>
+
+<div>
+    <h4>Ranking Diagnosticos</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Total)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Total)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ProbxDiag)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ProbxDiag.ProbxDiagID)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.RankingDiagID">Editar</a> |
+    <a asp-action="Index">Volver</a>
+</div>

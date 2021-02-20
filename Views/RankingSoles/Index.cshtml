@@ -1,0 +1,41 @@
+﻿@model IEnumerable<ServiceMVC.Models.RankingSol>
+
+@{
+    ViewData["Title"] = "Ranking Soluciones";
+}
+
+<h1>Ranking Soluciones</h1>
+
+<p>
+    <a asp-action="Create">Nuevo</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Total)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DiagxSol)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Total)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DiagxSol.DiagxSolID)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.RankingSolID">Editar</a> |
+                <a asp-action="Details" asp-route-id="@item.RankingSolID">Detalles</a> |
+                <a asp-action="Delete" asp-route-id="@item.RankingSolID">Eliminar</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

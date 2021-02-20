@@ -1,0 +1,30 @@
+﻿@model ServiceMVC.Models.ProbxDiag
+
+@{
+    ViewData["Title"] = "Detalles";
+}
+
+<h1>Detalles</h1>
+
+<div>
+    <h4>Problema x Diagnostico</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Problema)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Problema.ProblemaID)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Diagnostico)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Diagnostico.DiagnosticoID)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.ProbxDiagID">Editar</a> |
+    <a asp-action="Index">Volver</a>
+</div>

@@ -1,0 +1,36 @@
+﻿@model ServiceMVC.Models.DiagxSol
+
+@{
+    ViewData["Title"] = "Crear";
+}
+
+<h1>Crear</h1>
+
+<h4>Diagnosticos x Soluciones</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="DiagnosticoID" class="control-label"></label>
+                <select asp-for="DiagnosticoID" class ="form-control" asp-items="ViewBag.DiagnosticoID"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="SolucionID" class="control-label"></label>
+                <select asp-for="SolucionID" class ="form-control" asp-items="ViewBag.SolucionID"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Crear" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Volver</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
