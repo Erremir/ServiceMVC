@@ -7,7 +7,8 @@
 <h1>Equipos</h1>
 
 <p>
-    <a asp-action="Create">Nuevos</a>
+    @*<a asp-action="Create">Nuevos</a>*@
+    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Create","Equipos")' class="btnLoadModal btn btn-outline-primary" data-toggle="modal" data-target="#modalPersnalizado"><span><i class="bi-plus-circle-fill"></i></span> Nuevo</a>
 </p>
 <table class="table">
     <thead>
@@ -21,7 +22,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.CategoriaEquipo)
             </th>
-            <th></th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
@@ -31,17 +32,19 @@
                 @Html.DisplayFor(modelItem => item.Descripcion)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Cliente.ClienteID)
+                @Html.DisplayFor(modelItem => item.Cliente.ApellidoNombre)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CategoriaEquipo.CategoriaEquipoID)
+                @Html.DisplayFor(modelItem => item.CategoriaEquipo.Categoria)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.EquipoID">Editar</a> |
-                <a asp-action="Details" asp-route-id="@item.EquipoID">Detalles</a> |
-                <a asp-action="Delete" asp-route-id="@item.EquipoID">Eliminar</a>
+                <a href="#modalPersnalizado" data-id='@Url.ActionLink("Edit","Equipos")/@item.EquipoID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-pencil-fill text-primary"></i></a> |
+                <a href="#modalPersnalizado" data-id='@Url.ActionLink("Details","Equipos")/@item.EquipoID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-eye-fill text-info"></i></a> |
+                <a href="#modalPersnalizado" data-id='@Url.ActionLink("Delete","Equipos")/@item.EquipoID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-trash-fill text-danger"></i></a>
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+<partial name="_modalview" />

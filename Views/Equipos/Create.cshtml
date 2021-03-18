@@ -1,7 +1,15 @@
 ﻿@model ServiceMVC.Models.Equipo
 
 @{
+    bool partial = (bool) ViewData["Partial"];
+    string action = "Create";
+    if (partial)
+    {
+        Layout = null;
+        action = "CreatePartial";
+    }
     ViewData["Title"] = "Crear";
+
 }
 
 <h1>Crear</h1>
@@ -10,7 +18,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="@action">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="ClienteID" class="control-label"></label>
@@ -31,10 +39,15 @@
         </form>
     </div>
 </div>
+@{ 
+    if (!partial)
+    {
+    <div>
+        <a asp-action="Index">Volver</a>
+    </div>
+    }
+}
 
-<div>
-    <a asp-action="Index">Volver</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

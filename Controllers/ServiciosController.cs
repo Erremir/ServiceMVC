@@ -46,6 +46,7 @@ namespace ServiceMVC.Controllers
         // GET: Servicios/Create
         public IActionResult Create()
         {
+
             return View();
         }
 
@@ -54,11 +55,16 @@ namespace ServiceMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ServicioID,EquipoID,FechaIng,FechaEgr,TiempoTrabajo,UnidadesTrabajo,Total,Solucionado")] Servicio servicio)
+        public async Task<IActionResult> Create([Bind("ServicioID,EquipoID,FechaIng")] Servicio servicio)
         {
             if (ModelState.IsValid)
             {
                 servicio.ServicioID = Guid.NewGuid();
+                servicio.FechaEgr = null;
+                servicio.TiempoTrabajo = 0;
+                servicio.UnidadesTrabajo = 0;
+                servicio.Total = 0;
+                servicio.Solucionado = false;
                 _context.Add(servicio);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

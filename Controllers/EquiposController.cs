@@ -49,9 +49,53 @@ namespace ServiceMVC.Controllers
         // GET: Equipos/Create
         public IActionResult Create()
         {
-            ViewData["CategoriaEquipoID"] = new SelectList(_context.CategoriaEquipos, "CategoriaEquipoID", "CategoriaEquipoID");
-            ViewData["ClienteID"] = new SelectList(_context.Clientes, "ClienteID", "ClienteID");
+            ViewData["Partial"] = false;
+            ViewData["CategoriaEquipoID"] = new SelectList(_context.CategoriaEquipos, "CategoriaEquipoID", "Categoria");
+            ViewData["ClienteID"] = new SelectList(_context.Clientes, "ClienteID", "ApellidoNombre");
             return View();
+        }
+
+        public IActionResult CreatePartial(Guid? id)
+        {
+            ViewData["Partial"] = true;
+            ViewData["CategoriaEquipoID"] = new SelectList(_context.CategoriaEquipos, "CategoriaEquipoID", "Categoria");
+
+            ViewData["ClienteID"] = id != null
+                ? new SelectList(_context.Clientes, "ClienteID", "ApellidoNombre", id.ToString())
+                : new SelectList(_context.Clientes, "ClienteID", "ApellidoNombre");
+
+            return View("Create");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreatePartial([Bind("EquipoID,ClienteID,CategoriaEquipoID,Descripcion")] Equipo equipo)
+        {
+            if (ModelState.IsValid)
+            {
+                equipo.EquipoID = Guid.NewGuid();
+                _context.Add(equipo);
+                await _context.SaveChangesAsync();
+
+                var cliente = await _context.Clientes
+                .FirstOrDefaultAsync(m => m.ClienteID == equipo.ClienteID);
+
+                ViewBag.cliente = cliente;
+
+                List<Equipo> equipos = await _context.Equipos.ToListAsync();
+
+                var filtrado = equipos.FindAll(m => m.ClienteID == cliente.ClienteID);
+                ViewData["EquipoID"] = new SelectList(filtrado, "EquipoID", "Descripcion");
+
+                ViewData["Partial"] = true;
+
+                return View("Views/Servicios/Create.cshtml");
+            }
+            
+            ViewData["CategoriaEquipoID"] = new SelectList(_context.CategoriaEquipos, "CategoriaEquipoID", "Categoria", equipo.CategoriaEquipoID);
+            ViewData["ClienteID"] = new SelectList(_context.Clientes, "ClienteID", "ApellidoNombre", equipo.ClienteID);
+                       
+            return View(equipo);
         }
 
         // POST: Equipos/Create
@@ -68,8 +112,9 @@ namespace ServiceMVC.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoriaEquipoID"] = new SelectList(_context.CategoriaEquipos, "CategoriaEquipoID", "CategoriaEquipoID", equipo.CategoriaEquipoID);
-            ViewData["ClienteID"] = new SelectList(_context.Clientes, "ClienteID", "ClienteID", equipo.ClienteID);
+            ViewData["CategoriaEquipoID"] = new SelectList(_context.CategoriaEquipos, "CategoriaEquipoID", "Categoria", equipo.CategoriaEquipoID);
+            ViewData["ClienteID"] = new SelectList(_context.Clientes, "ClienteID", "ApellidoNombre", equipo.ClienteID);
+            
             return View(equipo);
         }
 
@@ -86,8 +131,8 @@ namespace ServiceMVC.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoriaEquipoID"] = new SelectList(_context.CategoriaEquipos, "CategoriaEquipoID", "CategoriaEquipoID", equipo.CategoriaEquipoID);
-            ViewData["ClienteID"] = new SelectList(_context.Clientes, "ClienteID", "ClienteID", equipo.ClienteID);
+            ViewData["CategoriaEquipoID"] = new SelectList(_context.CategoriaEquipos, "CategoriaEquipoID", "Categoria", equipo.CategoriaEquipoID);
+            ViewData["ClienteID"] = new SelectList(_context.Clientes, "ClienteID", "ApellidoNombre", equipo.ClienteID);
             return View(equipo);
         }
 
@@ -123,8 +168,8 @@ namespace ServiceMVC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoriaEquipoID"] = new SelectList(_context.CategoriaEquipos, "CategoriaEquipoID", "CategoriaEquipoID", equipo.CategoriaEquipoID);
-            ViewData["ClienteID"] = new SelectList(_context.Clientes, "ClienteID", "ClienteID", equipo.ClienteID);
+            ViewData["CategoriaEquipoID"] = new SelectList(_context.CategoriaEquipos, "CategoriaEquipoID", "Categoria", equipo.CategoriaEquipoID);
+            ViewData["ClienteID"] = new SelectList(_context.Clientes, "ClienteID", "ApellidoNombre", equipo.ClienteID);
             return View(equipo);
         }
 

@@ -25,6 +25,13 @@ namespace ServiceMVC.Controllers
             return View(await _context.Clientes.ToListAsync());
         }
 
+
+        public async Task<IActionResult> BuscarClientes()
+        {
+            return PartialView("_Clientes", await _context.Clientes.ToListAsync());
+        }
+
+
         // GET: Clientes/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -41,6 +48,28 @@ namespace ServiceMVC.Controllers
             }
 
             return View(cliente);
+        }
+
+        public async Task<IActionResult> ClienteDetalle(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var cliente = await _context.Clientes
+                .FirstOrDefaultAsync(m => m.ClienteID == id);
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.cliente = cliente;
+            List<Equipo> equipos = await _context.Equipos.ToListAsync();
+            var filtrado = equipos.FindAll(m => m.ClienteID == cliente.ClienteID);
+            ViewData["EquipoID"] = new SelectList(filtrado, "EquipoID", "Descripcion");
+
+            return View("Views/Servicios/Create.cshtml");
         }
 
         // GET: Clientes/Create

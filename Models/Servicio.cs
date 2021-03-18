@@ -12,14 +12,18 @@ namespace ServiceMVC.Models
         [Key]
         public Guid ServicioID { get; set; }
         public Guid EquipoID { get; set; }
+        [Display(Name = "Fecha Ingreso")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime FechaIng { get; set; }
-        public DateTime FechaEgr { get; set; }
+        [Display(Name = "Fecha Egreso")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
+        public DateTime? FechaEgr { get; set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal TiempoTrabajo { get; set; }
+        public decimal? TiempoTrabajo { get; set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal UnidadesTrabajo { get; set; }
+        public decimal? UnidadesTrabajo { get; set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal Total { get; set; }
+        public decimal? Total { get; set; }
         public bool Solucionado { get; set; }
 
         public Cliente Cliente { get; set; }

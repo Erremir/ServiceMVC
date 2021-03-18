@@ -2,19 +2,39 @@
 
 @{
     ViewData["Title"] = "Crear";
+    var cliente = ViewBag.cliente as ServiceMVC.Models.Cliente;
 }
-
 <h1>Crear</h1>
 
 <h4>Servicio</h4>
 <hr />
+
+<div id="PartialClient">
+    @await Html.PartialAsync("_ClienteDetalle", cliente)
+</div>
+<br />
+
+@{
+    if (cliente != null)
+    {
+        @*<form asp-action="CreatePartial" asp-controller="Equipos" method="get">
+            <input name="ClienteID" hidden value="@cliente.ClienteID" />*@
+            <a data-id="@cliente.ClienteID" value="Agregar Equipo in" id='showModalPersonalizado' class="btn btn-outline-primary btnEquipos" data-toggle="modal" data-target="#modalPersnalizado">Agregar Equipos</a>
+        @*</form>*@
+    }
+    else
+    {
+        <a data-id="" value="Agregar Equipo in" id='showModalPersonalizado' class="btn btn-outline-primary btnEquipos" data-toggle="modal" data-target="#modalPersnalizado">Agregar Equipos</a>
+    }
+}
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="EquipoID" class="control-label"></label>
-                <input asp-for="EquipoID" class="form-control" />
+                <label asp-for="EquipoID" class="control-label">Equipo</label>
+                <select asp-for="EquipoID" class="form-control" asp-items="ViewBag.EquipoID"></select>
                 <span asp-validation-for="EquipoID" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -22,7 +42,7 @@
                 <input asp-for="FechaIng" class="form-control" />
                 <span asp-validation-for="FechaIng" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label asp-for="FechaEgr" class="control-label"></label>
                 <input asp-for="FechaEgr" class="form-control" />
                 <span asp-validation-for="FechaEgr" class="text-danger"></span>
@@ -46,7 +66,7 @@
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="Solucionado" /> @Html.DisplayNameFor(model => model.Solucionado)
                 </label>
-            </div>
+            </div>*@
             <div class="form-group">
                 <input type="submit" value="Crear" class="btn btn-primary" />
             </div>
@@ -56,6 +76,23 @@
 
 <div>
     <a asp-action="Index">Volver</a>
+</div>
+
+
+<div id='modalPersnalizado' class="modal fade" tabindex="-1" role="dialog" aria-labelledby="labelModal" aria-hidden="true" data-url='@Url.ActionLink("Index", "Equipos")'>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" aria-label="Close">x</button>
+                <h5 class="modal-title" id="labelModal"></h5>
+            </div>
+            <div class="modal-body" id="modal-body-personalizado">
+                <div class="modal-content" id='modal-content-personalizado'>
+                    Cargando ...
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {

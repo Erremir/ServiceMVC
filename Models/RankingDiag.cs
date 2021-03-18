@@ -9,10 +9,11 @@ namespace ServiceMVC.Models
     public class RankingDiag
     {
         [Key]
-        public Guid RankingDiagID { get; set; }
+        public Guid RankingDiagID { get; set; }        
         public Guid ProbxDiagID { get; set; }
         public int Total { get; set; }
 
+        [Display(Name = "Problema/Diagnostico")]
         public ProbxDiag ProbxDiag { get; set; }
     }
 }
