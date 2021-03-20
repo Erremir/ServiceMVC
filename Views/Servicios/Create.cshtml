@@ -19,12 +19,12 @@
     {
         @*<form asp-action="CreatePartial" asp-controller="Equipos" method="get">
             <input name="ClienteID" hidden value="@cliente.ClienteID" />*@
-            <a data-id="@cliente.ClienteID" value="Agregar Equipo in" id='showModalPersonalizado' class="btn btn-outline-primary btnEquipos" data-toggle="modal" data-target="#modalPersnalizado">Agregar Equipos</a>
+            <a href="#Equipos" data-id="@cliente.ClienteID" value="Agregar Equipo in" id='showModalPersonalizado' class="btnEquipos btn btn-outline-primary" data-toggle="modal" data-target="#modalPersnalizado">Agregar Equipos</a>
         @*</form>*@
     }
     else
     {
-        <a data-id="" value="Agregar Equipo in" id='showModalPersonalizado' class="btn btn-outline-primary btnEquipos" data-toggle="modal" data-target="#modalPersnalizado">Agregar Equipos</a>
+        <a href="#Equipos" data-id="" value="Agregar Equipo in" id='showModalPersonalizado' class="btnEquipos btn btn-outline-primary" data-toggle="modal" data-target="#modalPersnalizado">Agregar Equipos</a>
     }
 }
 

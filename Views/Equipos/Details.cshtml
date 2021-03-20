@@ -21,17 +21,20 @@
             @Html.DisplayNameFor(model => model.Cliente)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Cliente.ClienteID)
+            @Html.DisplayFor(model => model.Cliente.ApellidoNombre)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.CategoriaEquipo)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CategoriaEquipo.CategoriaEquipoID)
+            @Html.DisplayFor(model => model.CategoriaEquipo.Categoria)
         </dd>
     </dl>
 </div>
-@*<div>
-    <a asp-action="Edit" asp-route-id="@Model.EquipoID">Editar</a> |
-    <a asp-action="Index">Volver</a>
-</div>*@
+<div>
+    @*<a href="#modalPersnalizado" data-id='@Url.ActionLink("Edit","Equipos")/@Model.EquipoID' class="btnLoadModal btn" data-toggle="modal" data-target="#modalPersnalizado"><span><i class="bi-pencil-fill text-primary"></i></span>Editar</a>*@
+    @*<a asp-action="Edit" asp-route-id="@Model.EquipoID">Editar</a> |
+        <a asp-action="Index">Volver</a>*@
+</div>
+
+@*<partial name="_modalview" />*@

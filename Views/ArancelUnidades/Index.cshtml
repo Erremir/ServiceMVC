@@ -7,7 +7,7 @@
 <h1>Arancel Unidad de Trabajo</h1>
 
 <p>
-    <a asp-action="Create">Nuevo</a>
+    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Create","ArancelUnidades")' class="btnLoadModal btn btn-outline-primary" data-toggle="modal" data-target="#modalPersnalizado"><span><i class="bi-plus-circle-fill"></i></span> Nuevo</a>
 </p>
 <table class="table">
     <thead>
@@ -15,21 +15,24 @@
             <th>
                 @Html.DisplayNameFor(model => model.Precio)
             </th>
-            <th></th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Precio)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ArancelUnidadID">Editar</a> |
-                <a asp-action="Details" asp-route-id="@item.ArancelUnidadID">Detalles</a> |
-                <a asp-action="Delete" asp-route-id="@item.ArancelUnidadID">Eliminar</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Precio)
+                </td>
+                <td>
+                    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Edit","ArancelUnidades")/@item.ArancelUnidadID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-pencil-fill text-primary"></i></a> |
+                    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Details","ArancelUnidades")/@item.ArancelUnidadID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-eye-fill text-info"></i></a> |
+                    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Delete","ArancelUnidades")/@item.ArancelUnidadID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-trash-fill text-danger"></i></a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<partial name="_modalview" />

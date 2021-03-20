@@ -22,9 +22,13 @@ namespace ServiceMVC.Controllers
         // GET: Clientes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Clientes.ToListAsync());
+            return View(await _context.Clientes.Where(c => c.Status == true).ToListAsync());
         }
 
+        public async Task<IActionResult> IndexAll()
+        {
+            return View("Index", await _context.Clientes.ToListAsync());
+        }
 
         public async Task<IActionResult> BuscarClientes()
         {
@@ -83,11 +87,12 @@ namespace ServiceMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ClienteID,Nombre,Apellido,Domicilio,Email,TelCel,TelFijo,Comentario,Status")] Cliente cliente)
+        public async Task<IActionResult> Create([Bind("ClienteID,Nombre,Apellido,Domicilio,Email,TelCel,TelFijo,Comentario")] Cliente cliente)
         {
             if (ModelState.IsValid)
             {
                 cliente.ClienteID = Guid.NewGuid();
+                cliente.Status = true;
                 _context.Add(cliente);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -170,7 +175,9 @@ namespace ServiceMVC.Controllers
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var cliente = await _context.Clientes.FindAsync(id);
-            _context.Clientes.Remove(cliente);
+            cliente.Status = false;
+            _context.Update(cliente);
+            //_context.Clientes.Remove(cliente);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

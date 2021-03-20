@@ -7,35 +7,38 @@
 <h1>Ranking Clientes</h1>
 
 <p>
-    <a asp-action="Create">Nuevo</a>
+    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Create","RankingClientess")' class="btnLoadModal btn btn-outline-primary" data-toggle="modal" data-target="#modalPersnalizado"><span><i class="bi-plus-circle-fill"></i></span> Nuevo</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.TotalServicios)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Cliente)
             </th>
-            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalServicios)
+            </th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.TotalServicios)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cliente.ClienteID)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.RankingClientesID">Editar</a> |
-                <a asp-action="Details" asp-route-id="@item.RankingClientesID">Detalles</a> |
-                <a asp-action="Delete" asp-route-id="@item.RankingClientesID">Eliminar</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cliente.ApellidoNombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalServicios)
+                </td>
+                <td>
+                    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Edit","RankingClientess")/@item.RankingClientesID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-pencil-fill text-primary"></i></a> |
+                    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Details","RankingClientess")/@item.RankingClientesID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-eye-fill text-info"></i></a> |
+                    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Delete","RankingClientess")/@item.RankingClientesID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-trash-fill text-danger"></i></a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<partial name="_modalview" />

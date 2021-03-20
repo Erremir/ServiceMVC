@@ -1,7 +1,8 @@
 ﻿@model ServiceMVC.Models.RankingClientes
 
 @{
-    ViewData["Title"] = "Editar";
+    //ViewData["Title"] = "Editar";
+    Layout = null;
 }
 
 <h1>Editar</h1>
@@ -14,7 +15,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="RankingClientesID" />
             <div class="form-group">
-                <label asp-for="ClienteID" class="control-label"></label>
+                <label asp-for="ClienteID" class="control-label">Cliente</label>
                 <select asp-for="ClienteID" class="form-control" asp-items="ViewBag.ClienteID"></select>
                 <span asp-validation-for="ClienteID" class="text-danger"></span>
             </div>
@@ -30,9 +31,9 @@
     </div>
 </div>
 
-<div>
+@*<div>
     <a asp-action="Index">Volver</a>
-</div>
+</div>*@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

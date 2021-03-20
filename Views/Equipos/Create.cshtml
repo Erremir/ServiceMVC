@@ -5,11 +5,10 @@
     string action = "Create";
     if (partial)
     {
-        Layout = null;
         action = "CreatePartial";
     }
     ViewData["Title"] = "Crear";
-
+    Layout = null;
 }
 
 <h1>Crear</h1>
@@ -21,11 +20,11 @@
         <form asp-action="@action">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="ClienteID" class="control-label"></label>
+                <label asp-for="ClienteID" class="control-label">Cliente</label>
                 <select asp-for="ClienteID" class ="form-control" asp-items="ViewBag.ClienteID"></select>
             </div>
             <div class="form-group">
-                <label asp-for="CategoriaEquipoID" class="control-label"></label>
+                <label asp-for="CategoriaEquipoID" class="control-label">Categoria Equipo</label>
                 <select asp-for="CategoriaEquipoID" class ="form-control" asp-items="ViewBag.CategoriaEquipoID"></select>
             </div>
             <div class="form-group">
@@ -40,12 +39,12 @@
     </div>
 </div>
 @{ 
-    if (!partial)
+    @*if (!partial)
     {
     <div>
         <a asp-action="Index">Volver</a>
     </div>
-    }
+    }*@
 }
 
 

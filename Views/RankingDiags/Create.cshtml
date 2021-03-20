@@ -1,7 +1,8 @@
 ﻿@model ServiceMVC.Models.RankingDiag
 
 @{
-    ViewData["Title"] = "Crear";
+    //ViewData["Title"] = "Crear";
+    Layout = null;
 }
 
 <h1>Crear</h1>
@@ -28,9 +29,9 @@
     </div>
 </div>
 
-<div>
+@*<div>
     <a asp-action="Index">Volver</a>
-</div>
+</div>*@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

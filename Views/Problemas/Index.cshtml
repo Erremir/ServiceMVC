@@ -7,7 +7,7 @@
 <h1>Problemas</h1>
 
 <p>
-    <a asp-action="Create">Nuevo</a>
+    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Create","Problemas")' class="btnLoadModal btn btn-outline-primary" data-toggle="modal" data-target="#modalPersnalizado"><span><i class="bi-plus-circle-fill"></i></span> Nuevo</a>
 </p>
 <table class="table">
     <thead>
@@ -19,17 +19,20 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Descripcion)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ProblemaID">Editar</a> |
-                <a asp-action="Details" asp-route-id="@item.ProblemaID">Detalles</a> |
-                <a asp-action="Delete" asp-route-id="@item.ProblemaID">Eliminar</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Descripcion)
+                </td>
+                <td>
+                    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Edit","Problemas")/@item.ProblemaID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-pencil-fill text-primary"></i></a> |
+                    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Details","Problemas")/@item.ProblemaID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-eye-fill text-info"></i></a> |
+                    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Delete","Problemas")/@item.ProblemaID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-trash-fill text-danger"></i></a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<partial name="_modalview" />

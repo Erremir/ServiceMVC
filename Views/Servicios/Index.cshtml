@@ -13,7 +13,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.EquipoID)
+                @Html.DisplayNameFor(model => model.Cliente)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.FechaIng)
@@ -33,39 +33,42 @@
             <th>
                 @Html.DisplayNameFor(model => model.Solucionado)
             </th>
-            <th></th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.EquipoID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaIng)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaEgr)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TiempoTrabajo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnidadesTrabajo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Total)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Solucionado)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ServicioID">Editar</a> |
-                <a asp-action="Details" asp-route-id="@item.ServicioID">Detalles</a> |
-                <a asp-action="Delete" asp-route-id="@item.ServicioID">Eliminar</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cliente.ApellidoNombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaIng)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaEgr)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TiempoTrabajo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnidadesTrabajo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Total)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Solucionado)
+                </td>
+                <td>
+                    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Edit","Servicios")/@item.ServicioID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-pencil-fill text-primary"></i></a> |
+                    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Details","Servicios")/@item.ServicioID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-eye-fill text-info"></i></a> |
+                    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Delete","Servicios")/@item.ServicioID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-trash-fill text-danger"></i></a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<partial name="_modalview" />

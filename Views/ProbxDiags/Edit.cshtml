@@ -1,7 +1,8 @@
 ﻿@model ServiceMVC.Models.ProbxDiag
 
 @{
-    ViewData["Title"] = "Editar";
+    //ViewData["Title"] = "Editar";
+    Layout = null;
 }
 
 <h1>Editar</h1>
@@ -14,12 +15,12 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ProbxDiagID" />
             <div class="form-group">
-                <label asp-for="ProblemaID" class="control-label"></label>
+                <label asp-for="ProblemaID" class="control-label">Problema</label>
                 <select asp-for="ProblemaID" class="form-control" asp-items="ViewBag.ProblemaID"></select>
                 <span asp-validation-for="ProblemaID" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="DiagnosticoID" class="control-label"></label>
+                <label asp-for="DiagnosticoID" class="control-label">Diagnostico</label>
                 <select asp-for="DiagnosticoID" class="form-control" asp-items="ViewBag.DiagnosticoID"></select>
                 <span asp-validation-for="DiagnosticoID" class="text-danger"></span>
             </div>
@@ -30,9 +31,9 @@
     </div>
 </div>
 
-<div>
+@*<div>
     <a asp-action="Index">Volver</a>
-</div>
+</div>*@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

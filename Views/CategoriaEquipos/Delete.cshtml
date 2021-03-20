@@ -1,7 +1,8 @@
 ﻿@model ServiceMVC.Models.CategoriaEquipo
 
 @{
-    ViewData["Title"] = "Eliminar";
+    //ViewData["Title"] = "Eliminar";
+    Layout = null;
 }
 
 <h1>Eliminar</h1>
@@ -21,7 +22,7 @@
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="CategoriaEquipoID" />
-        <input type="submit" value="Eliminar" class="btn btn-danger" /> |
-        <a asp-action="Index">Volver</a>
+        <input type="submit" value="Eliminar" class="btn btn-danger" /> 
+        @*<a asp-action="Index">Volver</a>*@
     </form>
 </div>

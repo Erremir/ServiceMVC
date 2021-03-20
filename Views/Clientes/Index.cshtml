@@ -7,7 +7,8 @@
 <h1>Clientes</h1>
 
 <p>
-    <a asp-action="Create">Nuevo</a>
+    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Create","Clientes")' class="btnLoadModal btn btn-outline-primary" data-toggle="modal" data-target="#modalPersnalizado"><span><i class="bi-plus-circle-fill"></i></span> Nuevo</a>
+    <a asp-action="IndexAll">Ver Todos</a>
 </p>
 <table class="table">
     <thead>
@@ -36,42 +37,55 @@
             <th>
                 @Html.DisplayNameFor(model => model.Status)
             </th>
-            <th></th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nombre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Apellido)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Domicilio)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TelCel)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TelFijo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Comentario)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ClienteID">Editar</a> |
-                <a asp-action="Details" asp-route-id="@item.ClienteID">Detalles</a> |
-                <a asp-action="Delete" asp-route-id="@item.ClienteID">Eliminar</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Apellido)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Domicilio)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TelCel)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TelFijo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Comentario)
+                </td>
+                <td>
+                    @{
+                        if (item.Status)
+                        {
+                            <i class="bi-check-square-fill text-primary"></i>
+                        }
+                        else
+                        {
+                            <i class="bi-square-fill text-danger"></i>
+                        }
+                    }
+                    @*<span class="bg-info">@Html.DisplayFor(modelItem => item.Status)</span>*@
+                </td>
+                <td>
+                    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Edit","Clientes")/@item.ClienteID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-pencil-fill text-primary"></i></a> |
+                    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Details","Clientes")/@item.ClienteID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-eye-fill text-info"></i></a> |
+                    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Delete","Clientes")/@item.ClienteID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-trash-fill text-danger"></i></a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<partial name="_modalview" />
