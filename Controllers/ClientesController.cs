@@ -94,6 +94,13 @@ namespace ServiceMVC.Controllers
                 cliente.ClienteID = Guid.NewGuid();
                 cliente.Status = true;
                 _context.Add(cliente);
+                
+                RankingClientes rankingClientes = new RankingClientes();
+                rankingClientes.RankingClientesID = Guid.NewGuid();
+                rankingClientes.ClienteID = cliente.ClienteID;
+                rankingClientes.TotalServicios = 0;
+                _context.Add(rankingClientes);
+                
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

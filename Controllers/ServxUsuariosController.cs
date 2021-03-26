@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,17 +14,55 @@ namespace ServiceMVC.Controllers
     public class ServxUsuariosController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ServxUsuariosController(ApplicationDbContext context)
+        public ServxUsuariosController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: ServxUsuarios
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.ServxUsuarios.Include(s => s.Servicio).Include(s => s.Usuario);
+            string userID = _userManager.GetUserId(HttpContext.User);
+            var applicationDbContext = _context.ServxUsuarios
+                .Include(s => s.Servicio).Include(c => c.Servicio.Cliente)
+                .Include(s => s.Usuario)
+                .Where(u => u.UsuarioID == userID);
             return View(await applicationDbContext.ToListAsync());
+        }
+
+        //GET: ServxUsuarios/AllServices
+        public async Task<IActionResult> AllServices()
+        {
+            var applicationDbContext = _context.ServxUsuarios
+                .Include(s => s.Servicio).Include(c => c.Servicio.Cliente)
+                .Include(s => s.Usuario);
+            return View("Index", await applicationDbContext.ToListAsync());
+        }
+
+        //GET: ServxUsuarios/AvaiableServices
+        public async Task<IActionResult> AvaiableServices()
+        {
+            var applicationDbContext = _context.ServxUsuarios
+                .Include(s => s.Servicio).Include(c => c.Servicio.Cliente)
+                .Include(s => s.Usuario).Where(u => u.UsuarioID == null);
+            return View("Index", await applicationDbContext.ToListAsync());
+        }
+
+        //GET: ServxUsuarios/TakeService/1
+        public async Task<IActionResult> TakeService(Guid id)
+        {
+            string userID = _userManager.GetUserId(HttpContext.User);
+            var servxUsuario = await _context.ServxUsuarios.FirstOrDefaultAsync(m => m.ServcUsuarioID == id);
+            servxUsuario.UsuarioID = userID;
+            
+            _context.Update(servxUsuario);
+            await _context.SaveChangesAsync();
+
+            var applicationDbContext = _context.ServxUsuarios.Include(s => s.Servicio).Include(s => s.Usuario).Where(u => u.UsuarioID == userID);
+            return View("Index", await applicationDbContext.ToListAsync());
         }
 
         // GET: ServxUsuarios/Details/5
@@ -35,7 +74,7 @@ namespace ServiceMVC.Controllers
             }
 
             var servxUsuario = await _context.ServxUsuarios
-                .Include(s => s.Servicio)
+                .Include(s => s.Servicio).Include(c => c.Servicio.Cliente)
                 .Include(s => s.Usuario)
                 .FirstOrDefaultAsync(m => m.ServcUsuarioID == id);
             if (servxUsuario == null)
@@ -137,7 +176,7 @@ namespace ServiceMVC.Controllers
             }
 
             var servxUsuario = await _context.ServxUsuarios
-                .Include(s => s.Servicio)
+                .Include(s => s.Servicio).Include(c => c.Servicio.Cliente)
                 .Include(s => s.Usuario)
                 .FirstOrDefaultAsync(m => m.ServcUsuarioID == id);
             if (servxUsuario == null)

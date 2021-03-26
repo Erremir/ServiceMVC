@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ServiceMVC.Data;
 
 namespace ServiceMVC.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210323120959_AppUserMod")]
+    partial class AppUserMod
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -537,7 +539,7 @@ namespace ServiceMVC.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ClienteID")
+                    b.Property<Guid?>("ClienteID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("EquipoID")
@@ -823,9 +825,7 @@ namespace ServiceMVC.Data.Migrations
                 {
                     b.HasOne("ServiceMVC.Models.Cliente", "Cliente")
                         .WithMany()
-                        .HasForeignKey("ClienteID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ClienteID");
 
                     b.Navigation("Cliente");
                 });

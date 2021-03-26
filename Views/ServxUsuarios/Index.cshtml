@@ -21,7 +21,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Status)
             </th>
-            <th></th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
@@ -38,6 +38,15 @@
                     @Html.DisplayFor(modelItem => item.Status)
                 </td>
                 <td>
+                    @if (item.UsuarioID == null)
+                    {
+                        <a href="@Url.ActionLink("TakeService","ServxUsuarios")/@item.ServcUsuarioID" class="btn btn-sm btn-primary">Tomar Servicio</a>
+                    }
+                    else
+                    {
+                      <a href="@Url.ActionLink("GoService","ServxUsuarios")/@item.ServcUsuarioID" class="btn btn-sm btn-primary">Ir al Servicio</a>
+                    }
+                    |
                     <a href="#modalPersnalizado" data-id='@Url.ActionLink("Edit","ServxUsuarios")/@item.ServcUsuarioID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-pencil-fill text-primary"></i></a> |
                     <a href="#modalPersnalizado" data-id='@Url.ActionLink("Details","ServxUsuarios")/@item.ServcUsuarioID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-eye-fill text-info"></i></a> |
                     <a href="#modalPersnalizado" data-id='@Url.ActionLink("Delete","ServxUsuarios")/@item.ServcUsuarioID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-trash-fill text-danger"></i></a>

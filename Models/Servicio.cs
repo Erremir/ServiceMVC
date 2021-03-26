@@ -11,6 +11,7 @@ namespace ServiceMVC.Models
     {
         [Key]
         public Guid ServicioID { get; set; }
+        public Guid ClienteID { get; set; }
         public Guid EquipoID { get; set; }
         [Display(Name = "Fecha Ingreso")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]

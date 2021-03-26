@@ -22,7 +22,7 @@ namespace ServiceMVC.Controllers
         // GET: Servicios
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Servicios.ToListAsync());
+            return View(await _context.Servicios.Include(u => u.Cliente).ToListAsync());
         }
 
         // GET: Servicios/Details/5
@@ -55,17 +55,28 @@ namespace ServiceMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ServicioID,EquipoID,FechaIng")] Servicio servicio)
+        public async Task<IActionResult> Create([Bind("ServicioID,ClienteID,EquipoID,FechaIng")] Servicio servicio)
         {
             if (ModelState.IsValid)
             {
+                Cliente cliente = _context.Clientes.Find(servicio.ClienteID);
+
                 servicio.ServicioID = Guid.NewGuid();
                 servicio.FechaEgr = null;
+                servicio.Cliente = cliente;
                 servicio.TiempoTrabajo = 0;
                 servicio.UnidadesTrabajo = 0;
                 servicio.Total = 0;
                 servicio.Solucionado = false;
+
+                ServxUsuario servxUsuario = new ServxUsuario();
+                servxUsuario.ServcUsuarioID = Guid.NewGuid();
+                servxUsuario.Servicio = servicio;
+                servxUsuario.Status = false;
+                servxUsuario.UsuarioID = null;
+
                 _context.Add(servicio);
+                _context.Add(servxUsuario);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

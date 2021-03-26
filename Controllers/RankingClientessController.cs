@@ -22,7 +22,7 @@ namespace ServiceMVC.Controllers
         // GET: RankingClientess
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.RankingClientess.Include(r => r.Cliente);
+            var applicationDbContext = _context.RankingClientess.Include(r => r.Cliente).Where(r => r.Cliente.Status == true).OrderByDescending(r => r.TotalServicios);
             return View(await applicationDbContext.ToListAsync());
         }
 
