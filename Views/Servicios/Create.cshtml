@@ -34,7 +34,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             @if (cliente != null)
             {
-            <input type="hidden" asp-for="ClienteID" value="@cliente.ClienteID" />
+                <input type="hidden" asp-for="ClienteID" value="@cliente.ClienteID" />
             }
             <div class="form-group">
                 <label asp-for="EquipoID" class="control-label">Equipo</label>
@@ -45,6 +45,11 @@
                 <label asp-for="FechaIng" class="control-label"></label>
                 <input asp-for="FechaIng" class="form-control" />
                 <span asp-validation-for="FechaIng" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Comentarios" class="control-label"></label>
+                <input asp-for="Comentarios" class="form-control" />
+                <span asp-validation-for="Comentarios" class="text-danger"></span>
             </div>
             @*<div class="form-group">
             <label asp-for="FechaEgr" class="control-label"></label>

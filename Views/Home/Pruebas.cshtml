@@ -1,20 +1,13 @@
 ﻿@model ServiceMVC.Models.Equipo
 
 @{
-    ViewData["Title"] = "Home Page";
+    Layout = "_ModalLayout";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
-<br />
+<h4>Equipos por cliente</h4>
 <hr />
-@*<div class="text-center align-items-center">
-    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Pruebas","Home")' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado">Abrir modal</a>
-</div>*@
 
-@*<div class="row">
+<div class="row">
     <div class="col-md-4">
         <form id="Agregar" asp-action="ninguna" asp-controller="ProbDiagSoles" method="get">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -31,6 +24,7 @@
             </div>
         </form>
     </div>
-</div>*@
-
-@*<partial name="_modalview" />*@
+</div>
+@section Scripts{ 
+    <script src="~/js/ClientexEquiposCMB.js"></script>
+}

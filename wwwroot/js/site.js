@@ -13,6 +13,7 @@ $(document).ready(function () {
             $('#modal-content').modal('show');
         });
     });
+
 });
 
 $(".btnEquipos").click(function(eve) {

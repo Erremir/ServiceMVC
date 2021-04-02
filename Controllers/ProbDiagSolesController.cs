@@ -26,6 +26,184 @@ namespace ServiceMVC.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
+        // GET: ProbDiagSoles/CompletarAltaServicio/1
+        public async Task<IActionResult> CompletarAltaServicio(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Servicio servicio = _context.Servicios.Find(id);
+            ViewBag.Servicio = servicio;
+            ViewBag.Cliente = _context.Clientes.Find(servicio.ClienteID).ApellidoNombre;
+            ViewBag.Equipo = _context.Equipos.Find(servicio.EquipoID);
+ 
+            var applicationDbContext = await _context.ProbDiagSoles
+                .Include(p => p.Diagnostico)
+                .Include(p => p.Problema)
+                .Include(p => p.Servicio)
+                .Include(p => p.Servicio.Cliente)
+                .Include(p => p.Solucion)
+                .Where(p => p.ServicioID == id).ToListAsync();
+
+            ViewBag.TotalProbs = applicationDbContext.Where(p => p.Problema != null).Count();
+            ViewBag.TotalDiags = applicationDbContext.Where(p => p.Diagnostico != null).Count();
+            ViewBag.TotalSoles = applicationDbContext.Where(p => p.Solucion != null).Count();
+
+            if (applicationDbContext.Select(p => p.Problema).Count() == 0)
+            {
+                ViewBag.Title = "Completal Alta";
+            }
+            else
+            {
+                ViewBag.Title = "Procesar Servicio";
+            }
+
+            return View(applicationDbContext);
+        }
+//Agregar Problema
+        public IActionResult AgregarProb(Guid id)
+        {
+            ViewBag.ServicioID = id;
+            ViewData["ProblemaID"] = new SelectList(_context.Problemas, "ProblemaID", "Descripcion");
+            
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> VincularProb([Bind("ServicioID,ProblemaID")] ProbDiagSol probDiagSol)
+        {
+
+            if (ModelState.IsValid)
+            {
+                probDiagSol.ProbDiagSolID = Guid.NewGuid();
+                _context.Add(probDiagSol);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(CompletarAltaServicio), new { @id = probDiagSol.ServicioID });
+            }
+
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> AgregarProb( string Descripcion, [Bind("ServicioID")] ProbDiagSol probDiagSol)
+        {
+
+            if (ModelState.IsValid)
+            {
+                Problema problema = new Problema();
+                problema.ProblemaID = Guid.NewGuid();
+                problema.Descripcion = Descripcion;
+
+                probDiagSol.ProbDiagSolID = Guid.NewGuid();
+                probDiagSol.ProblemaID = problema.ProblemaID;
+                probDiagSol.Problema = problema;
+                
+                _context.Add(problema);
+                _context.Add(probDiagSol);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(CompletarAltaServicio), new { @id = probDiagSol.ServicioID });
+            }
+
+            return View();
+        }
+
+        //AgregarDiag
+        public IActionResult AgregarDiag(Guid id)
+        {
+            ViewBag.ServicioID = id;
+            List<Problema> problemas = _context.ProbDiagSoles.Where(p => p.ServicioID == id).Select(p => p.Problema).ToList();
+            ViewData["ProblemaID"] = new SelectList(problemas, "ProblemaID", "Descripcion");
+
+            //List<Diagnostico> diagnosticos = _context.ProbxDiags.Where(p => p.ServicioID == id).Select(p => p.Problema).ToList();
+            ViewData["DiagnosticoID"] = new SelectList(_context.Diagnosticos, "DiagnosticoID", "Descripcion");
+
+            return View();
+        }
+
+        public IActionResult ProblemaChange(Guid id)
+        {
+            var diagnosticos = _context.ProbxDiags.Where(p => p.ProblemaID == id).Select(p => p.Diagnostico);
+            return Json(diagnosticos);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> VincularDiag([Bind("ServicioID,ProblemaID, DiagnosticoID")] ProbDiagSol probDiagSol)
+        {
+
+            if (ModelState.IsValid)
+            {
+                ProbDiagSol probDiagSolupdate = _context.ProbDiagSoles.Where(p => p.ServicioID == probDiagSol.ServicioID && p.ProblemaID == probDiagSol.ProblemaID).FirstOrDefault();
+                probDiagSolupdate.DiagnosticoID = probDiagSol.DiagnosticoID;
+
+                ProbxDiag probxDiag = _context.ProbxDiags.Where(p => p.ProblemaID == probDiagSolupdate.ProblemaID && p.DiagnosticoID == probDiagSolupdate.DiagnosticoID).FirstOrDefault();
+                if (probxDiag == null)
+                {
+                    ProbxDiag newProbxDiag = new ProbxDiag();
+                    newProbxDiag.ProbxDiagID = Guid.NewGuid();
+                    newProbxDiag.ProblemaID = (Guid)probDiagSolupdate.ProblemaID;
+                    newProbxDiag.DiagnosticoID = (Guid)probDiagSolupdate.DiagnosticoID;
+                    _context.Add(newProbxDiag);
+                }
+
+                _context.Update(probDiagSolupdate);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(CompletarAltaServicio), new { @id = probDiagSol.ServicioID });
+            }
+
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> AgregarDiag(string Descripcion, [Bind("ServicioID, ProblemaID")] ProbDiagSol probDiagSol)
+        {
+
+            if (ModelState.IsValid)
+            {
+                Diagnostico diagnostico = new Diagnostico();
+                diagnostico.DiagnosticoID = Guid.NewGuid();
+                diagnostico.Descripcion = Descripcion;
+
+                ProbDiagSol probDiagSolupdate = _context.ProbDiagSoles.Where(p => p.ServicioID == probDiagSol.ServicioID && p.ProblemaID == probDiagSol.ProblemaID).FirstOrDefault();
+                probDiagSolupdate.DiagnosticoID = diagnostico.DiagnosticoID;
+                probDiagSolupdate.Diagnostico = diagnostico;
+
+                ProbxDiag probxDiag = _context.ProbxDiags.Where(p => p.ProblemaID == probDiagSolupdate.ProblemaID && p.DiagnosticoID == probDiagSolupdate.DiagnosticoID).FirstOrDefault();
+                if(probxDiag == null)
+                {
+                    ProbxDiag newProbxDiag = new ProbxDiag();
+                    newProbxDiag.ProbxDiagID = Guid.NewGuid();
+                    newProbxDiag.ProblemaID = (Guid)probDiagSolupdate.ProblemaID;
+                    newProbxDiag.DiagnosticoID = (Guid)probDiagSolupdate.DiagnosticoID;
+                    _context.Add(newProbxDiag);
+                }
+
+                _context.Add(diagnostico);
+                _context.Update(probDiagSolupdate);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(CompletarAltaServicio), new { @id = probDiagSol.ServicioID });
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CompletarAltaServicio([Bind("ServicioID,ProblemaID,DiagnosticoID,SolucionID")] ProbDiagSol probDiagSol)
+        {
+            if (ModelState.IsValid)
+            {
+                probDiagSol.ProbDiagSolID = Guid.NewGuid();
+                _context.Add(probDiagSol);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(CompletarAltaServicio), new { @id = probDiagSol.ServicioID });
+            }
+
+            ViewData["DiagnosticoID"] = new SelectList(_context.Diagnosticos, "DiagnosticoID", "Descripcion", probDiagSol.DiagnosticoID);
+            ViewData["ProblemaID"] = new SelectList(_context.Problemas, "ProblemaID", "Descripcion", probDiagSol.ProblemaID);
+            ViewData["ServicioID"] = new SelectList(_context.Servicios, "ServicioID", "ServicioID", probDiagSol.ServicioID);
+            ViewData["SolucionID"] = new SelectList(_context.Soluciones, "SolucionID", "Descripcion", probDiagSol.SolucionID);
+            return View(probDiagSol);
+        }
+
         // GET: ProbDiagSoles/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -51,8 +229,8 @@ namespace ServiceMVC.Controllers
         // GET: ProbDiagSoles/Create
         public IActionResult Create()
         {
-            ViewData["DiagnosticoID"] = new SelectList(_context.Diagnosticos, "DiagnosticoID", "DiagnosticoID");
-            ViewData["ProblemaID"] = new SelectList(_context.Problemas, "ProblemaID", "ProblemaID");
+            ViewData["DiagnosticoID"] = new SelectList(_context.Diagnosticos, "DiagnosticoID", "Descripcion");
+            ViewData["ProblemaID"] = new SelectList(_context.Problemas, "ProblemaID", "Descripcion");
             ViewData["ServicioID"] = new SelectList(_context.Servicios, "ServicioID", "ServicioID");
             ViewData["SolucionID"] = new SelectList(_context.Soluciones, "SolucionID", "Descripcion");
             return View();
@@ -72,8 +250,8 @@ namespace ServiceMVC.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DiagnosticoID"] = new SelectList(_context.Diagnosticos, "DiagnosticoID", "DiagnosticoID", probDiagSol.DiagnosticoID);
-            ViewData["ProblemaID"] = new SelectList(_context.Problemas, "ProblemaID", "ProblemaID", probDiagSol.ProblemaID);
+            ViewData["DiagnosticoID"] = new SelectList(_context.Diagnosticos, "DiagnosticoID", "Descripcion", probDiagSol.DiagnosticoID);
+            ViewData["ProblemaID"] = new SelectList(_context.Problemas, "ProblemaID", "Descripcion", probDiagSol.ProblemaID);
             ViewData["ServicioID"] = new SelectList(_context.Servicios, "ServicioID", "ServicioID", probDiagSol.ServicioID);
             ViewData["SolucionID"] = new SelectList(_context.Soluciones, "SolucionID", "Descripcion", probDiagSol.SolucionID);
             return View(probDiagSol);
@@ -92,8 +270,8 @@ namespace ServiceMVC.Controllers
             {
                 return NotFound();
             }
-            ViewData["DiagnosticoID"] = new SelectList(_context.Diagnosticos, "DiagnosticoID", "DiagnosticoID", probDiagSol.DiagnosticoID);
-            ViewData["ProblemaID"] = new SelectList(_context.Problemas, "ProblemaID", "ProblemaID", probDiagSol.ProblemaID);
+            ViewData["DiagnosticoID"] = new SelectList(_context.Diagnosticos, "DiagnosticoID", "Descripcion", probDiagSol.DiagnosticoID);
+            ViewData["ProblemaID"] = new SelectList(_context.Problemas, "ProblemaID", "Descripcion", probDiagSol.ProblemaID);
             ViewData["ServicioID"] = new SelectList(_context.Servicios, "ServicioID", "ServicioID", probDiagSol.ServicioID);
             ViewData["SolucionID"] = new SelectList(_context.Soluciones, "SolucionID", "Descripcion", probDiagSol.SolucionID);
             return View(probDiagSol);
@@ -131,8 +309,8 @@ namespace ServiceMVC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DiagnosticoID"] = new SelectList(_context.Diagnosticos, "DiagnosticoID", "DiagnosticoID", probDiagSol.DiagnosticoID);
-            ViewData["ProblemaID"] = new SelectList(_context.Problemas, "ProblemaID", "ProblemaID", probDiagSol.ProblemaID);
+            ViewData["DiagnosticoID"] = new SelectList(_context.Diagnosticos, "DiagnosticoID", "Descripcion", probDiagSol.DiagnosticoID);
+            ViewData["ProblemaID"] = new SelectList(_context.Problemas, "ProblemaID", "Descripcion", probDiagSol.ProblemaID);
             ViewData["ServicioID"] = new SelectList(_context.Servicios, "ServicioID", "ServicioID", probDiagSol.ServicioID);
             ViewData["SolucionID"] = new SelectList(_context.Soluciones, "SolucionID", "Descripcion", probDiagSol.SolucionID);
             return View(probDiagSol);

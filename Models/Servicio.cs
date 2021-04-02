@@ -25,6 +25,7 @@ namespace ServiceMVC.Models
         public decimal? UnidadesTrabajo { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal? Total { get; set; }
+        public string Comentarios { get; set; }
         public bool Solucionado { get; set; }
 
         public Cliente Cliente { get; set; }

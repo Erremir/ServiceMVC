@@ -55,7 +55,7 @@ namespace ServiceMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ServicioID,ClienteID,EquipoID,FechaIng")] Servicio servicio)
+        public async Task<IActionResult> Create([Bind("ServicioID,ClienteID,EquipoID,FechaIng,Comentarios")] Servicio servicio)
         {
             if (ModelState.IsValid)
             {
@@ -75,11 +75,33 @@ namespace ServiceMVC.Controllers
                 servxUsuario.Status = false;
                 servxUsuario.UsuarioID = null;
 
+                ProbDiagSol probDiagSol = new ProbDiagSol();
+                probDiagSol.ProbDiagSolID = Guid.NewGuid();
+                probDiagSol.Servicio = servicio;
+                
                 _context.Add(servicio);
                 _context.Add(servxUsuario);
+                _context.Add(probDiagSol);
+
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("CompletarAltaServicio", "ProbDiagSoles",new { @id = servicio.ServicioID });
             }
+            return View(servicio);
+        }
+        public async Task<IActionResult> Comentarios(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var servicio = await _context.Servicios
+                .FirstOrDefaultAsync(m => m.ServicioID == id);
+            if (servicio == null)
+            {
+                return NotFound();
+            }
+
             return View(servicio);
         }
 
@@ -92,6 +114,11 @@ namespace ServiceMVC.Controllers
             }
 
             var servicio = await _context.Servicios.FindAsync(id);
+            List<Equipo> equipos = await _context.Equipos.ToListAsync();
+
+            var filtrado = equipos.FindAll(m => m.ClienteID == servicio.ClienteID);
+            ViewData["EquipoID"] = new SelectList(filtrado, "EquipoID", "Descripcion");
+
             if (servicio == null)
             {
                 return NotFound();
@@ -104,7 +131,7 @@ namespace ServiceMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("ServicioID,EquipoID,FechaIng,FechaEgr,TiempoTrabajo,UnidadesTrabajo,Total,Solucionado")] Servicio servicio)
+        public async Task<IActionResult> Edit(Guid id, [Bind("ServicioID,EquipoID,FechaIng,FechaEgr,TiempoTrabajo,UnidadesTrabajo,Total,Comentarios,Solucionado")] Servicio servicio)
         {
             if (id != servicio.ServicioID)
             {

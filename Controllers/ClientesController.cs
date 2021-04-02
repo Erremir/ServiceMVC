@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
+using ReflectionIT.Mvc.Paging;
 using ServiceMVC.Data;
 using ServiceMVC.Models;
 
@@ -20,14 +22,46 @@ namespace ServiceMVC.Controllers
         }
 
         // GET: Clientes
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string filter, int page = 1,string sortExpression = "Apellido")
         {
-            return View(await _context.Clientes.Where(c => c.Status == true).ToListAsync());
+            List<Cliente> lista = new List<Cliente>();
+
+            if (!string.IsNullOrEmpty(filter))
+            {
+                lista = await _context.Clientes
+                    .Where(c => c.Status == true)
+                    .Where(c => c.Apellido.Contains(filter) || c.Nombre.Contains(filter)).ToListAsync();
+            }
+            else
+            {
+                lista = await _context.Clientes.Where(c => c.Status == true).ToListAsync();
+            }
+
+            var clientes = PagingList.Create(lista.AsQueryable(), 10, page, sortExpression, "Apellido");
+
+            clientes.RouteValue = new RouteValueDictionary { { "Filter", filter } };
+
+            return View(clientes);
         }
 
-        public async Task<IActionResult> IndexAll()
+        public async Task<IActionResult> IndexAll(string filter, int page = 1, string sortExpression = "Apellido")
         {
-            return View("Index", await _context.Clientes.ToListAsync());
+            List<Cliente> lista = new List<Cliente>();
+
+            if (!string.IsNullOrEmpty(filter))
+            {
+                lista = await _context.Clientes.Where(c => c.Apellido.Contains(filter) || c.Nombre.Contains(filter)).ToListAsync();
+            }
+            else
+            {
+                lista = await _context.Clientes.ToListAsync();
+            }
+
+            var clientes = PagingList.Create(lista.AsQueryable(), 10, page, sortExpression, "Apellido");
+
+            clientes.RouteValue = new RouteValueDictionary { { "Filtro", filter } };
+
+            return View("Index", clientes);
         }
 
         public async Task<IActionResult> BuscarClientes()
@@ -38,6 +72,23 @@ namespace ServiceMVC.Controllers
 
         // GET: Clientes/Details/5
         public async Task<IActionResult> Details(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var cliente = await _context.Clientes
+                .FirstOrDefaultAsync(m => m.ClienteID == id);
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+
+            return View(cliente);
+        }
+
+        public async Task<IActionResult> Comentario(Guid? id)
         {
             if (id == null)
             {

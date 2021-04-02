@@ -1,0 +1,125 @@
+﻿@model IEnumerable<ServiceMVC.Models.ProbDiagSol>
+
+@{
+    ViewData["Title"] = ViewBag.Title;
+    //Layout = null;
+}
+
+<h1>@ViewBag.Title</h1>
+
+<h4>Problemas - Diagnosticos - Soluciones</h4>
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <dl class="row">
+            <dt class="col-sm-2">
+                Cliente
+            </dt>
+            <dd class="col-lg-4 col-sm-10">
+                @ViewBag.Cliente
+            </dd>
+            <dt class="col-sm-2">
+                Equipo
+            </dt>
+            <dd class="col-lg-4 col-sm-10">
+                @ViewBag.Equipo.Descripcion
+            </dd>
+            <div class="w-100 d-none d-lg-block"></div>
+            <dt class="col-sm-2">
+                Fecha de Ingreso
+            </dt>
+            <dd class="col-lg-4 col-sm-10">
+                @ViewBag.Servicio.FechaIng
+            </dd>
+            <dt class="col-sm-2">
+                Comentarios
+            </dt>
+            <dd class="col-lg-4 col-sm-10">
+                @ViewBag.Servicio.Comentarios
+            </dd>
+        </dl>
+    </div>
+</div>
+
+<hr />
+<p>
+        <a href="#modalPersnalizado" data-id='@Url.ActionLink("AgregarProb","ProbDIagSoles")/@ViewBag.Servicio.ServicioID' class="btnLoadModal btn btn-outline-danger" data-toggle="modal" data-target="#modalPersnalizado"><span><i class="bi-plus-circle-fill"></i></span> Agregar Problema</a>
+    @if (ViewBag.TotalProbs > 0)
+    {
+        <a href="#modalPersnalizado" data-id='@Url.ActionLink("AgregarDiag","ProbDIagSoles")/@ViewBag.Servicio.ServicioID' class="btnLoadModal btn btn-outline-warning" data-toggle="modal" data-target="#modalPersnalizado"><span><i class="bi-plus-circle-fill"></i></span> Agregar Diagnostico</a>
+    }
+    
+    @if (ViewBag.TotalDiags > 0)
+    {
+        <a href="#modalPersnalizado" data-id='@Url.ActionLink("AgregarSol","ProbDIagSoles")/@ViewBag.Servicio.ServicioID' class="btnLoadModal btn btn-outline-success" data-toggle="modal" data-target="#modalPersnalizado"><span><i class="bi-plus-circle-fill"></i></span> Agregar Solucion</a>
+    }
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Servicio.Cliente)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Problema)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Diagnostico)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Solucion)
+            </th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Servicio.Cliente.ApellidoNombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Problema.Descripcion)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Diagnostico.Descripcion)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Solucion.Descripcion)
+                </td>
+                <td>
+                    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Edit","ProbDIagSoles")/@item.ProbDiagSolID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-pencil-fill text-primary"></i></a> |
+                    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Details","ProbDIagSoles")/@item.ProbDiagSolID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-eye-fill text-info"></i></a> |
+                    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Delete","ProbDIagSoles")/@item.ProbDiagSolID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-trash-fill text-danger"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <a asp-action="Index" asp-controller="Servicios" class="btn btn-outline-primary">@ViewBag.Title</a>
+    @if (ViewBag.TotalProbs != 0)
+    {
+        if (ViewBag.TotalDiags >= ViewBag.TotalProbs && ViewBag.TotalSoles >= ViewBag.TotalDiags)
+        {
+            <a asp-action="Index" asp-controller="Servicios" class="btn btn-outline-success">Cerrar Caso Completado</a>
+        }
+        else
+        {
+            if (ViewBag.TotalSoles >= ViewBag.TotalDiags)
+            {
+              <a asp-action="Index" asp-controller="Servicios" class="btn btn-outline-warning">Cerrar Caso Incompleto</a>
+            }
+        }
+
+    }
+</div>
+
+<partial name="_modalview" />
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

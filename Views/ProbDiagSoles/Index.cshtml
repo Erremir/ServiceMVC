@@ -13,7 +13,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Servicio)
+                @Html.DisplayNameFor(model => model.Servicio.Cliente)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Problema)
@@ -32,13 +32,13 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Servicio.ServicioID)
+                    @Html.DisplayFor(modelItem => item.Servicio.Cliente)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Problema.ProblemaID)
+                    @Html.DisplayFor(modelItem => item.Problema.Descripcion)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Diagnostico.DiagnosticoID)
+                    @Html.DisplayFor(modelItem => item.Diagnostico.Descripcion)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Solucion.Descripcion)

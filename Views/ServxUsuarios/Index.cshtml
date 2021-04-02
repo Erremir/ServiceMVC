@@ -29,22 +29,39 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Usuario.UserName)
+                    @if (item.UsuarioID == null)
+                    {
+                        <span>Sin Responsable</span>
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(modelItem => item.Usuario.UserName)
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Servicio.Cliente.ApellidoNombre)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Status)
+                    @{
+                        if (item.Status)
+                        {
+                            <i class="bi-check-square-fill text-primary"></i>
+                        }
+                        else
+                        {
+                            <i class="bi-square-fill text-danger"></i>
+                        }
+                    }
+                    @*@Html.DisplayFor(modelItem => item.Status)*@
                 </td>
                 <td>
                     @if (item.UsuarioID == null)
                     {
-                        <a href="@Url.ActionLink("TakeService","ServxUsuarios")/@item.ServcUsuarioID" class="btn btn-sm btn-primary">Tomar Servicio</a>
+                        <a href="@Url.ActionLink("TakeService","ServxUsuarios")/@item.ServcUsuarioID" class="btn btn-sm btn-info">Tomar Servicio</a>
                     }
                     else
                     {
-                      <a href="@Url.ActionLink("GoService","ServxUsuarios")/@item.ServcUsuarioID" class="btn btn-sm btn-primary">Ir al Servicio</a>
+                      <a href="@Url.ActionLink("GoService","ServxUsuarios")/@item.ServcUsuarioID" class="btn btn-sm btn-success">Ir al Servicio</a>
                     }
                     |
                     <a href="#modalPersnalizado" data-id='@Url.ActionLink("Edit","ServxUsuarios")/@item.ServcUsuarioID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-pencil-fill text-primary"></i></a> |

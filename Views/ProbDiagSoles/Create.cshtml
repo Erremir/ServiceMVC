@@ -8,6 +8,9 @@
 <h1>Crear</h1>
 
 <h4>Problemas - Diagnosticos - Soluciones</h4>
+<p>
+    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Create","Problemas")' class="btnLoadModal btn btn-outline-primary" data-toggle="modal" data-target="#modalPersnalizado"><span><i class="bi-plus-circle-fill"></i></span> Agregar Problema</a>
+</p>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -39,6 +42,8 @@
 @*<div>
     <a asp-action="Index">Volver</a>
 </div>*@
+
+<partial name="_modalview" />
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

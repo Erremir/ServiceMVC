@@ -7,7 +7,7 @@
 <h1>Servicios</h1>
 
 <p>
-    <a asp-action="Create">Nuevo</a>
+    <a asp-action="Create" class="btn btn-outline-primary"><span><i class="bi-plus-circle-fill"></i></span> Nuevo</a>
 </p>
 <table class="table">
     <thead>
@@ -31,6 +31,9 @@
                 @Html.DisplayNameFor(model => model.Total)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Comentarios)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Solucionado)
             </th>
             <th>Acciones</th>
@@ -39,34 +42,57 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Cliente.ApellidoNombre)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FechaIng)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FechaEgr)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TiempoTrabajo)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UnidadesTrabajo)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Total)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Solucionado)
-                </td>
-                <td>
-                    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Edit","Servicios")/@item.ServicioID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-pencil-fill text-primary"></i></a> |
-                    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Details","Servicios")/@item.ServicioID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-eye-fill text-info"></i></a> |
-                    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Delete","Servicios")/@item.ServicioID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-trash-fill text-danger"></i></a>
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cliente.ApellidoNombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaIng)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaEgr)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TiempoTrabajo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnidadesTrabajo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Total)
+            </td>
+            <td>
+                @{
+                    if (item.Comentarios != null)
+                    {
+                        <a href="#modalPersnalizado" data-id='@Url.ActionLink("Comentarios","Servicios")/@item.ServicioID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado">Ver Comentario</a>
+                    }
+                    else
+                    {
+                        <span>Sin Comentarios</span>
+                    }
+                }
+            </td>
+            <td>
+                @{
+                    if (item.Solucionado)
+                    {
+                        <i class="bi-check-square-fill text-primary"></i>
+                    }
+                    else
+                    {
+                        <i class="bi-square-fill text-danger"></i>
+                    }
+                }
+                @*@Html.DisplayFor(modelItem => item.Solucionado)*@
+            </td>
+            <td>
+                <a href='@Url.ActionLink("CompletarAltaServicio","ProbDiagSoles")/@item.ServicioID' class="btnLoadModal"><i class="bi-plus text-success"></i></a> |
+                <a href="#modalPersnalizado" data-id='@Url.ActionLink("Edit","Servicios")/@item.ServicioID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-pencil-fill text-primary"></i></a> |
+                <a href="#modalPersnalizado" data-id='@Url.ActionLink("Details","Servicios")/@item.ServicioID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-eye-fill text-info"></i></a> |
+                <a href="#modalPersnalizado" data-id='@Url.ActionLink("Delete","Servicios")/@item.ServicioID' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado"><i class="bi-trash-fill text-danger"></i></a>
+            </td>
+        </tr>
         }
     </tbody>
 </table>

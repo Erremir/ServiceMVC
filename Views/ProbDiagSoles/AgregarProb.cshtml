@@ -1,0 +1,43 @@
+﻿@model ServiceMVC.Models.ProbDiagSol
+
+@{
+    Layout = null;
+}
+
+<h4>Agregar Problema</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form  id="AgregarProb" asp-action="AgregarProb" asp-controller="ProbDiagSoles" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ServicioID" value="@ViewBag.ServicioID" />
+            <div class="form-group">
+                <label for="Descripcion" class="control-label">Descripcion</label>
+                <input type="text" form="AgregarProb" id="Descripcion" name="Descripcion" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input  form="AgregarProb" type="submit" value="Agregar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form id="Agregar" asp-action="VincularProb" asp-controller="ProbDiagSoles" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ServicioID" value="@ViewBag.ServicioID" />
+            <div class="form-group">
+                <label asp-for="ProblemaID" class="control-label">Problema</label>
+                <select asp-for="ProblemaID" class="form-control" asp-items="ViewBag.ProblemaID"></select>
+            </div>
+            <div class="form-group">
+                <input form="Agregar" type="submit" value="Agregar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
