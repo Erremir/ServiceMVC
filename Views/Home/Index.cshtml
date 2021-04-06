@@ -1,7 +1,7 @@
 ﻿@model ServiceMVC.Models.Equipo
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio";
 }
 
 <div class="text-center">
@@ -11,7 +11,7 @@
 <br />
 <hr />
 @*<div class="text-center align-items-center">
-    <a href="#modalPersnalizado" data-id='@Url.ActionLink("Pruebas","Home")' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado">Abrir modal</a>
+    <a href="#modalPersnalizado" data-id='@Url.ActionLink("AgregarDiag","ProbdiagSoles")' class="btnLoadModal" data-toggle="modal" data-target="#modalPersnalizado">Abrir modal</a>
 </div>*@
 
 @*<div class="row">
@@ -20,11 +20,11 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="ClienteID" class="control-label">Cliente</label>
-                <select asp-for="ClienteID" class="form-control" asp-items="ViewBag.ClienteID"></select>
+                <select multiple="multiple" asp-for="ClienteID" class="form-control cmborigen" asp-items="ViewBag.ClienteID"></select>
             </div>
             <div class="form-group">
                 <label asp-for="EquipoID" class="control-label">Equipos</label>
-                <select asp-for="EquipoID" class="form-control" asp-items="ViewBag.EquipoID"></select>
+                <select multiple="multiple" asp-for="EquipoID" class="form-control cmbdestino" asp-items="ViewBag.EquipoID"></select>
             </div>
             <div class="form-group">
                 <input form="Agregar" type="submit" value="Agregar" class="btn btn-primary" />
@@ -33,4 +33,27 @@
     </div>
 </div>*@
 
+@*<div class="row">
+<div class="col-md-4">
+    <form id="Agregar" asp-action="VincularDiag" asp-controller="ProbDiagSoles" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="ServicioID" value="@ViewBag.ServicioID" />
+        <div class="form-group">
+            <label asp-for="ProblemaID" class="control-label">Problema</label>
+            <select asp-for="ProblemaID" class="form-control cmborigen" asp-items="ViewBag.ProblemaID" data-id="@Url.ActionLink("ProblemaChange","ProbdiagSoles")"></select>
+        </div>
+        <div class="form-group">
+            <label asp-for="DiagnosticoID" class="control-label">Diagnostico</label>
+            <select asp-for="DiagnosticoID" class="form-control cmbdestino" asp-items="ViewBag.DiagnosticoID"></select>
+        </div>
+        <div class="form-group">
+            <input form="Agregar" type="submit" value="Agregar" class="btn btn-primary" />
+        </div>
+    </form>
+</div>
+</div>*@
+@section Scripts{
+    @*<script src="~/js/ClientexEquiposCMB.js"></script>*@
+    @*<script src="~/js/ProbxDiagCMB.js"></script>*@
+}
 @*<partial name="_modalview" />*@

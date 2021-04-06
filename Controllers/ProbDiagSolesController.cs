@@ -34,7 +34,7 @@ namespace ServiceMVC.Controllers
                 return NotFound();
             }
 
-            Servicio servicio = _context.Servicios.Find(id);
+            Servicio servicio = _context.Servicios.Where(s => s.ServicioID == id).FirstOrDefault();
             ViewBag.Servicio = servicio;
             ViewBag.Cliente = _context.Clientes.Find(servicio.ClienteID).ApellidoNombre;
             ViewBag.Equipo = _context.Equipos.Find(servicio.EquipoID);
@@ -51,7 +51,7 @@ namespace ServiceMVC.Controllers
             ViewBag.TotalDiags = applicationDbContext.Where(p => p.Diagnostico != null).Count();
             ViewBag.TotalSoles = applicationDbContext.Where(p => p.Solucion != null).Count();
 
-            if (applicationDbContext.Select(p => p.Problema).Count() == 0)
+            if (!applicationDbContext.Select(p => p.Problema).Any())
             {
                 ViewBag.Title = "Completal Alta";
             }
@@ -62,7 +62,27 @@ namespace ServiceMVC.Controllers
 
             return View(applicationDbContext);
         }
-//Agregar Problema
+
+        [HttpPost]
+        public async Task<IActionResult> CompletarAltaServicio([Bind("ServicioID,ProblemaID,DiagnosticoID,SolucionID")] ProbDiagSol probDiagSol)
+        {
+            if (ModelState.IsValid)
+            {
+                probDiagSol.ProbDiagSolID = Guid.NewGuid();
+                _context.Add(probDiagSol);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(CompletarAltaServicio), new { @id = probDiagSol.ServicioID });
+            }
+
+            ViewData["DiagnosticoID"] = new SelectList(_context.Diagnosticos, "DiagnosticoID", "Descripcion", probDiagSol.DiagnosticoID);
+            ViewData["ProblemaID"] = new SelectList(_context.Problemas, "ProblemaID", "Descripcion", probDiagSol.ProblemaID);
+            ViewData["ServicioID"] = new SelectList(_context.Servicios, "ServicioID", "ServicioID", probDiagSol.ServicioID);
+            ViewData["SolucionID"] = new SelectList(_context.Soluciones, "SolucionID", "Descripcion", probDiagSol.SolucionID);
+            return View(probDiagSol);
+        }
+
+        //Agregar Problema
+        // GET: AgregarProb/1
         public IActionResult AgregarProb(Guid id)
         {
             ViewBag.ServicioID = id;
@@ -109,14 +129,33 @@ namespace ServiceMVC.Controllers
         }
 
         //AgregarDiag
-        public IActionResult AgregarDiag(Guid id)
+        // GET: AgragarDiag/1
+        public IActionResult AgregarDiag(Guid? id)
         {
-            ViewBag.ServicioID = id;
-            List<Problema> problemas = _context.ProbDiagSoles.Where(p => p.ServicioID == id).Select(p => p.Problema).ToList();
-            ViewData["ProblemaID"] = new SelectList(problemas, "ProblemaID", "Descripcion");
+            if(id == null)
+            {
+                ViewData["ProblemaID"] = new SelectList(_context.Problemas, "ProblemaID", "Descripcion");
+            }
+            else
+            {
+                ViewBag.ServicioID = id;
+                List<Problema> problemas = _context.ProbDiagSoles.Where(p => p.ServicioID == id).Select(p => p.Problema).ToList();
+                ViewData["ProblemaID"] = new SelectList(problemas, "ProblemaID", "Descripcion");
+                if(problemas != null)
+                {
+                    var diagnosticos = _context.ProbxDiags.Where(p => p.ProblemaID == problemas[0].ProblemaID).Select(p => p.Diagnostico);
+                    ViewData["DiagnosticoID"] = new SelectList(diagnosticos, "DiagnosticoID", "Descripcion");
+                }                
+            }
 
-            //List<Diagnostico> diagnosticos = _context.ProbxDiags.Where(p => p.ServicioID == id).Select(p => p.Problema).ToList();
-            ViewData["DiagnosticoID"] = new SelectList(_context.Diagnosticos, "DiagnosticoID", "Descripcion");
+
+            //List<Diagnostico> diagnosticos = (from d in _context.Diagnosticos
+            //                                  join pxd in _context.ProbxDiags on d.DiagnosticoID equals pxd.DiagnosticoID
+            //                                  join pds in _context.ProbDiagSoles on pxd.ProblemaID equals pds.ProblemaID
+            //                                  where pds.ServicioID == id
+            //                                  select d).ToList();
+
+            //ViewData["DiagnosticoID"] = new SelectList(diagnosticos, "DiagnosticoID", "Descripcion");
 
             return View();
         }
@@ -186,23 +225,95 @@ namespace ServiceMVC.Controllers
             return View();
         }
 
+        public IActionResult AgregarSol(Guid? id)
+        {
+            if (id == null)
+            {
+                ViewData["DiagnosticoID"] = new SelectList(_context.ProbDiagSoles.Where(p => p.ServicioID == id).Select(p => p.Diagnostico), "DiagnosticoID", "Descripcion");
+                ViewData["DiagnosticoID"] = new SelectList(_context.ProbDiagSoles.Where(p => p.ServicioID == id).Select(p => p.Diagnostico), "DiagnosticoID", "Descripcion");
+            }
+            else
+            {
+                ViewBag.ServicioID = id;
+                List<Problema> problemas = _context.ProbDiagSoles.Where(p => p.ServicioID == id).Select(p => p.Problema).ToList();
+                ViewData["ProblemaID"] = new SelectList(problemas, "ProblemaID", "Descripcion");
+                List<Diagnostico> diagnostico = _context.ProbxDiags.Where(p => p.ProblemaID == problemas[0].ProblemaID).Select(p => p.Diagnostico).ToList();
+                ViewData["DiagnosticoID"] = new SelectList(diagnostico, "DiagnosticoID", "Descripcion");
+                if (diagnostico != null)
+                {
+                    var soluciones = _context.DiagxSoles.Where(p => p.DiagnosticoID == diagnostico[0].DiagnosticoID).Select(p => p.Solucion);
+                    ViewData["SolucionID"] = new SelectList(soluciones, "SolucionID", "Descripcion");
+                }
+            }
+
+            return View();
+        }
+
+        public IActionResult DiagnosticoChange(Guid id)
+        {
+            var soluciones = _context.DiagxSoles.Where(p => p.DiagnosticoID == id).Select(p => p.Solucion);
+            return Json(soluciones);
+        }
+
         [HttpPost]
-        public async Task<IActionResult> CompletarAltaServicio([Bind("ServicioID,ProblemaID,DiagnosticoID,SolucionID")] ProbDiagSol probDiagSol)
+        public async Task<IActionResult> VincularSol([Bind("ServicioID, ProblemaID, DiagnosticoID, SolucionID")] ProbDiagSol probDiagSol)
         {
             if (ModelState.IsValid)
             {
-                probDiagSol.ProbDiagSolID = Guid.NewGuid();
-                _context.Add(probDiagSol);
+                ProbDiagSol probDiagSolupdate = _context.ProbDiagSoles.Where(p => p.ServicioID == probDiagSol.ServicioID && p.ProblemaID == probDiagSol.ProblemaID && p.DiagnosticoID == probDiagSol.DiagnosticoID).FirstOrDefault();
+                probDiagSolupdate.SolucionID = probDiagSol.SolucionID;
+
+                DiagxSol diagxSol = _context.DiagxSoles.Where(p => p.DiagnosticoID == probDiagSolupdate.DiagnosticoID && p.SolucionID == probDiagSolupdate.SolucionID).FirstOrDefault();
+                if (diagxSol == null)
+                {
+                    DiagxSol newdiagxSol = new DiagxSol();
+                    newdiagxSol.DiagxSolID = Guid.NewGuid();
+                    newdiagxSol.DiagnosticoID = (Guid)probDiagSolupdate.DiagnosticoID;
+                    newdiagxSol.SolucionID = (Guid)probDiagSolupdate.SolucionID;
+                    _context.Add(newdiagxSol);
+                }
+
+                _context.Update(probDiagSolupdate);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(CompletarAltaServicio), new { @id = probDiagSol.ServicioID });
             }
 
-            ViewData["DiagnosticoID"] = new SelectList(_context.Diagnosticos, "DiagnosticoID", "Descripcion", probDiagSol.DiagnosticoID);
-            ViewData["ProblemaID"] = new SelectList(_context.Problemas, "ProblemaID", "Descripcion", probDiagSol.ProblemaID);
-            ViewData["ServicioID"] = new SelectList(_context.Servicios, "ServicioID", "ServicioID", probDiagSol.ServicioID);
-            ViewData["SolucionID"] = new SelectList(_context.Soluciones, "SolucionID", "Descripcion", probDiagSol.SolucionID);
-            return View(probDiagSol);
+            return View();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> AgregarSol(string Descripcion, [Bind("ServicioID, ProblemaID, DiagnosticoID")] ProbDiagSol probDiagSol)
+        {
+
+            if (ModelState.IsValid)
+            {
+                Solucion solucion = new Solucion();
+                solucion.SolucionID = Guid.NewGuid();
+                solucion.Descripcion = Descripcion;
+
+                ProbDiagSol probDiagSolupdate = _context.ProbDiagSoles.Where(p => p.ServicioID == probDiagSol.ServicioID && p.ProblemaID == probDiagSol.ProblemaID && p.DiagnosticoID == probDiagSol.DiagnosticoID).FirstOrDefault();
+                probDiagSolupdate.SolucionID = solucion.SolucionID;
+                probDiagSolupdate.Solucion = solucion;
+
+                DiagxSol diagxSol = _context.DiagxSoles.Where(p => p.DiagnosticoID == probDiagSolupdate.DiagnosticoID && p.SolucionID == probDiagSolupdate.SolucionID).FirstOrDefault();
+                if (diagxSol == null)
+                {
+                    DiagxSol newdiagxSol = new DiagxSol();
+                    newdiagxSol.DiagxSolID = Guid.NewGuid();
+                    newdiagxSol.DiagnosticoID = (Guid)probDiagSolupdate.DiagnosticoID;
+                    newdiagxSol.SolucionID = (Guid)probDiagSolupdate.SolucionID;
+                    _context.Add(newdiagxSol);
+                }
+
+                _context.Add(solucion);
+                _context.Update(probDiagSolupdate);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(CompletarAltaServicio), new { @id = probDiagSol.ServicioID });
+            }
+
+            return View();
+        }
+
 
         // GET: ProbDiagSoles/Details/5
         public async Task<IActionResult> Details(Guid? id)

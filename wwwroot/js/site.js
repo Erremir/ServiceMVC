@@ -24,3 +24,23 @@ $(".btnLoadModal").click(function (eve) {
     $('#modal-content-personalizado').load($(this).data("id"));
 });
 
+//$(function () {
+
+//    $("#ProblemaID").change(function () {
+//        fillCombo("DiagnosticoID", $("#ProblemaID").val());
+//    });
+
+//});
+
+//function fillCombo(updateId, value) {
+//    $.getJSON("ProbDiagSoles/ProblemaChange"
+//        + "/" + value,
+//        function (data) {
+//            $("#" + updateId).empty();
+//            $.each(data, function (i, item) {
+//                $("#" + updateId).append("<option  value='"
+//                    + item.diagnosticoID + "'>" + item.descripcion
+//                    + "</option >");
+//            });
+//        });
+//}

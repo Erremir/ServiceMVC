@@ -27,6 +27,7 @@ namespace ServiceMVC.Models
         public decimal? Total { get; set; }
         public string Comentarios { get; set; }
         public bool Solucionado { get; set; }
+        public bool Finalizado { get; set; }
 
         public Cliente Cliente { get; set; }
     }

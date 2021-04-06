@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using ServiceMVC.Data;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace ServiceMVC.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -24,7 +26,8 @@ namespace ServiceMVC.Controllers
 
         public IActionResult Index()
         {
-            ViewData["ClienteID"] = new SelectList(_context.Clientes, "ClienteID", "ApellidoNombre");
+            //ViewData["ClienteID"] = new SelectList(_context.Clientes, "ClienteID", "ApellidoNombre");
+            //ViewData["ProblemaID"] = new SelectList(_context.Problemas, "ProblemaID", "Descripcion");
             return View();
         }
 

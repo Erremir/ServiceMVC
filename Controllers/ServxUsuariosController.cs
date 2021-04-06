@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,6 +12,7 @@ using ServiceMVC.Models;
 
 namespace ServiceMVC.Controllers
 {
+    [Authorize]
     public class ServxUsuariosController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -25,11 +27,16 @@ namespace ServiceMVC.Controllers
         // GET: ServxUsuarios
         public async Task<IActionResult> Index()
         {
+
             string userID = _userManager.GetUserId(HttpContext.User);
             var applicationDbContext = _context.ServxUsuarios
                 .Include(s => s.Servicio).Include(c => c.Servicio.Cliente)
                 .Include(s => s.Usuario)
-                .Where(u => u.UsuarioID == userID);
+                .Where(u => u.UsuarioID == userID && u.Servicio.Finalizado == false)
+                .Where(s => s.Status == false);
+
+            ViewBag.servdisp = _context.ServxUsuarios.Where(u => u.UsuarioID == null).Count();
+
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -38,7 +45,8 @@ namespace ServiceMVC.Controllers
         {
             var applicationDbContext = _context.ServxUsuarios
                 .Include(s => s.Servicio).Include(c => c.Servicio.Cliente)
-                .Include(s => s.Usuario);
+                .Include(s => s.Usuario)
+                .Where(s => s.Servicio.Finalizado == false);
             return View("Index", await applicationDbContext.ToListAsync());
         }
 
@@ -47,7 +55,8 @@ namespace ServiceMVC.Controllers
         {
             var applicationDbContext = _context.ServxUsuarios
                 .Include(s => s.Servicio).Include(c => c.Servicio.Cliente)
-                .Include(s => s.Usuario).Where(u => u.UsuarioID == null);
+                .Include(s => s.Usuario).Where(u => u.UsuarioID == null)
+                .Where(s => s.Status == false);
             return View("Index", await applicationDbContext.ToListAsync());
         }
 
@@ -63,6 +72,31 @@ namespace ServiceMVC.Controllers
 
             var applicationDbContext = _context.ServxUsuarios.Include(s => s.Servicio).Include(s => s.Usuario).Where(u => u.UsuarioID == userID);
             return View("Index", await applicationDbContext.ToListAsync());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AbandonarServicio(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var servxusuario = await _context.ServxUsuarios
+                .FirstOrDefaultAsync(m => m.ServicioID == id && m.UsuarioID == _userManager.GetUserId(HttpContext.User));
+
+            if (servxusuario == null)
+            {
+                return NotFound();
+            }
+
+            servxusuario.UsuarioID = null;
+            servxusuario.Usuario = null;
+
+            _context.Update(servxusuario);
+            _context.SaveChanges();
+
+            return RedirectToAction(nameof(Index), "ServxUsuarios");
         }
 
         // GET: ServxUsuarios/Details/5
@@ -89,7 +123,7 @@ namespace ServiceMVC.Controllers
         public IActionResult Create()
         {
             ViewData["ServicioID"] = new SelectList(_context.Servicios, "ServicioID", "ServicioID");
-            ViewData["UsuarioID"] = new SelectList(_context.Set<ApplicationUser>(), "Id", "Id");
+            ViewData["UsuarioID"] = new SelectList(_context.Users, "Id", "UserName");
             return View();
         }
 
@@ -108,7 +142,7 @@ namespace ServiceMVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ServicioID"] = new SelectList(_context.Servicios, "ServicioID", "ServicioID", servxUsuario.ServicioID);
-            ViewData["UsuarioID"] = new SelectList(_context.Set<ApplicationUser>(), "Id", "Id", servxUsuario.UsuarioID);
+            ViewData["UsuarioID"] = new SelectList(_context.Users, "Id", "UserName", servxUsuario.UsuarioID);
             return View(servxUsuario);
         }
 

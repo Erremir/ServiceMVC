@@ -1,16 +1,17 @@
-﻿$("#ProblemaID").change(function () {
-    fillCombo("DiagnosticoID", $("#ProblemaID").val());
-});
+﻿    $(".cmborigen").change(function () {
+        fillCombo("cmbdestino", $(".cmborigen").val(),$(".cmborigen").data("id"));
+    });
 
-function fillCombo(updateId, value) {
-    $.getJSON("Home/ClientChange"
-        + "/" + value,
-        function (data) {
-            $("#" + updateId).empty();
-            $.each(data, function (i, item) {
-                $("#" + updateId).append("<option  value='"
-                    + item.diagnosticoID + "'>" + item.descripcion
-                    + "</option >");
+
+    function fillCombo(updateId, value,action) {
+        $.getJSON(action
+            + "/" + value,
+            function (data) {
+                $("." + updateId).empty();
+                $.each(data, function (i, item) {
+                    $("." + updateId).append("<option  value='"
+                        + item.diagnosticoID + "'>" + item.descripcion
+                        + "</option >");
+                });
             });
-        });
-}
+    }

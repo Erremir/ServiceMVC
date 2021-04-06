@@ -5,7 +5,7 @@
     //Layout = null;
 }
 @section Scripts{
-    <script src="~/js/ProbxDiagCMB.js"></script>
+    <script src="~/js/DiagxSolCMB.js"></script>
 }
 <h4>Agregar Problema</h4>
 <hr />
@@ -13,19 +13,23 @@
 <p>Si el Diagnostico no existe agrega uno nuevo</p>
 <div class="row">
     <div class="col-md-4">
-        <form id="AgregarDiag" asp-action="AgregarDiag" asp-controller="ProbDiagSoles" method="post">
+        <form id="AgregarSol" asp-action="AgregarSol" asp-controller="ProbDiagSoles" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ServicioID" value="@ViewBag.ServicioID" />
             <div class="form-group">
                 <label asp-for="ProblemaID" class="control-label">Problema</label>
-                <select asp-for="ProblemaID" class="form-control" asp-items="ViewBag.ProblemaID"></select>
+                <select asp-for="ProblemaID" class="form-control cmborigen1" asp-items="ViewBag.ProblemaID" data-id="@Url.ActionLink("ProblemaChange","ProbdiagSoles")"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="DiagnosticoID" class="control-label">Diagnostico</label>
+                <select asp-for="DiagnosticoID" class="form-control cmbdestino1" asp-items="ViewBag.DiagnosticoID"></select>
             </div>
             <div class="form-group">
                 <label for="Descripcion" class="control-label">Descripcion del Diagnostico</label>
-                <input type="text" form="AgregarDiag" id="Descripcion" name="Descripcion" class="form-control" />
+                <input type="text" form="AgregarSol" id="Descripcion" name="Descripcion" class="form-control" />
             </div>
             <div class="form-group">
-                <input form="AgregarDiag" type="submit" value="Agregar" class="btn btn-primary" />
+                <input form="AgregarSol" type="submit" value="Agregar" class="btn btn-primary" />
             </div>
         </form>
     </div>
@@ -35,7 +39,7 @@
 <p>O elige uno existente</p>
 <div class="row">
     <div class="col-md-4">
-        <form id="Agregar" asp-action="VincularDiag" asp-controller="ProbDiagSoles" method="post">
+        <form id="Agregar" asp-action="VincularSol" asp-controller="ProbDiagSoles" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ServicioID" value="@ViewBag.ServicioID" />
             <div class="form-group">
@@ -44,7 +48,11 @@
             </div>
             <div class="form-group">
                 <label asp-for="DiagnosticoID" class="control-label">Diagnostico</label>
-                <select asp-for="DiagnosticoID" class="form-control cmbdestino" asp-items="ViewBag.DiagnosticoID"></select>
+                <select asp-for="DiagnosticoID" class="form-control cmbdestino" asp-items="ViewBag.DiagnosticoID" data-id="@Url.ActionLink("DiagnosticoChange","ProbdiagSoles")"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="SolucionID" class="control-label2">Solucion</label>
+                <select asp-for="SolucionID" class="form-control cmbdestino2" asp-items="ViewBag.SolucionID"></select>
             </div>
             <div class="form-group">
                 <input form="Agregar" type="submit" value="Agregar" class="btn btn-primary" />

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +14,12 @@ namespace ServiceMVC.Controllers
     public class ServiciosController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ServiciosController(ApplicationDbContext context)
+        public ServiciosController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Servicios
@@ -68,6 +71,7 @@ namespace ServiceMVC.Controllers
                 servicio.UnidadesTrabajo = 0;
                 servicio.Total = 0;
                 servicio.Solucionado = false;
+                servicio.Finalizado = false;
 
                 ServxUsuario servxUsuario = new ServxUsuario();
                 servxUsuario.ServcUsuarioID = Guid.NewGuid();
@@ -75,13 +79,13 @@ namespace ServiceMVC.Controllers
                 servxUsuario.Status = false;
                 servxUsuario.UsuarioID = null;
 
-                ProbDiagSol probDiagSol = new ProbDiagSol();
-                probDiagSol.ProbDiagSolID = Guid.NewGuid();
-                probDiagSol.Servicio = servicio;
+                //ProbDiagSol probDiagSol = new ProbDiagSol();
+                //probDiagSol.ProbDiagSolID = Guid.NewGuid();
+                //probDiagSol.Servicio = servicio;
                 
                 _context.Add(servicio);
                 _context.Add(servxUsuario);
-                _context.Add(probDiagSol);
+                //_context.Add(probDiagSol);
 
                 await _context.SaveChangesAsync();
                 return RedirectToAction("CompletarAltaServicio", "ProbDiagSoles",new { @id = servicio.ServicioID });
@@ -103,6 +107,36 @@ namespace ServiceMVC.Controllers
             }
 
             return View(servicio);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> FinalizarServicio(Guid? id, bool solucionado = true)
+        {
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var servicio = await _context.Servicios
+                .FirstOrDefaultAsync(m => m.ServicioID == id);
+
+            if (servicio == null)
+            {
+                return NotFound();
+            }
+
+            ServxUsuario servxusuario = _context.ServxUsuarios.Where(p => p.ServicioID == id && p.UsuarioID == _userManager.GetUserId(HttpContext.User)).FirstOrDefault();
+            servxusuario.Status = true;
+
+            servicio.Finalizado = true;
+            servicio.Solucionado = solucionado;
+
+            _context.Update(servxusuario);
+            _context.Update(servicio);
+            _context.SaveChanges();
+
+            return RedirectToAction(nameof(Index)); 
         }
 
         // GET: Servicios/Edit/5
