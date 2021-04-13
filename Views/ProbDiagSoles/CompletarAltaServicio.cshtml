@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = ViewBag.Title;
     //Layout = null;
+    string controlador = "";
 }
 
 <h1>@ViewBag.Title</h1>
@@ -99,8 +100,18 @@
     </tbody>
 </table>
 
+@if (ViewBag.Title == "Servicios")
+{
+    controlador = "Serivicios";
+}
+else
+{
+    controlador = "ServxUsuarios";
+}
+
 <div>
-    <a asp-action="Index" asp-controller="Servicios" class="btn btn-outline-primary">Volver a Mis Servicios</a>  <a href="@Url.ActionLink("CompletarAltaServicio","ProbDiagSoles")/@ViewBag.Servicio.ServicioID" class="btn btn-outline-warning">Abandonar Servicio</a>
+    <a asp-action="Index" asp-controller="@controlador" class="btn btn-outline-primary">Volver a @ViewBag.Title </a>  <a href="@Url.ActionLink("CompletarAltaServicio","ProbDiagSoles")/@ViewBag.Servicio.ServicioID" class="btn btn-outline-warning">Abandonar Servicio</a>
+    <br />
     @if (ViewBag.TotalProbs != 0)
     {
         if (ViewBag.TotalDiags >= ViewBag.TotalProbs && ViewBag.TotalSoles >= ViewBag.TotalDiags)

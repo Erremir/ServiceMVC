@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
+using ReflectionIT.Mvc.Paging;
 using ServiceMVC.Data;
 using ServiceMVC.Models;
 
 namespace ServiceMVC.Controllers
 {
+    [Authorize]
     public class ServiciosController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -23,9 +27,20 @@ namespace ServiceMVC.Controllers
         }
 
         // GET: Servicios
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string filter, int page = 1)
         {
-            return View(await _context.Servicios.Include(u => u.Cliente).ToListAsync());
+            var lista = await _context.Servicios.Include(u => u.Cliente).ToListAsync();
+
+            if (!string.IsNullOrEmpty(filter))
+            {
+                lista = lista.Where(c => c.Cliente.ApellidoNombre.Contains(filter)).ToList();
+            }
+
+            var servicios = PagingList.Create(lista.AsQueryable(), 10, page);
+
+            servicios.RouteValue = new RouteValueDictionary { { "Filter", filter } };
+
+            return View(servicios);
         }
 
         // GET: Servicios/Details/5
@@ -73,16 +88,18 @@ namespace ServiceMVC.Controllers
                 servicio.Solucionado = false;
                 servicio.Finalizado = false;
 
-                ServxUsuario servxUsuario = new ServxUsuario();
-                servxUsuario.ServcUsuarioID = Guid.NewGuid();
-                servxUsuario.Servicio = servicio;
-                servxUsuario.Status = false;
-                servxUsuario.UsuarioID = null;
+                ServxUsuario servxUsuario = new ServxUsuario
+                {
+                    ServcUsuarioID = Guid.NewGuid(),
+                    Servicio = servicio,
+                    Status = false,
+                    UsuarioID = null
+                };
 
                 //ProbDiagSol probDiagSol = new ProbDiagSol();
                 //probDiagSol.ProbDiagSolID = Guid.NewGuid();
                 //probDiagSol.Servicio = servicio;
-                
+
                 _context.Add(servicio);
                 _context.Add(servxUsuario);
                 //_context.Add(probDiagSol);
@@ -100,6 +117,7 @@ namespace ServiceMVC.Controllers
             }
 
             var servicio = await _context.Servicios
+                .Include(s => s.Cliente)
                 .FirstOrDefaultAsync(m => m.ServicioID == id);
             if (servicio == null)
             {

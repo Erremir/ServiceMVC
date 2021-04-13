@@ -39,6 +39,8 @@ namespace ServiceMVC
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
 
+            services.AddScoped<SignInManager<ApplicationUser>, SignInManager<ApplicationUser>>();
+
             services.AddPaging(options => {
                 options.ViewName = "Paginador";
                 options.PageParameterName = "pageindex";

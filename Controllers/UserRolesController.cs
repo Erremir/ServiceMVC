@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace ServiceMVC.Controllers
 {
+    [Authorize]
     public class UserRolesController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;

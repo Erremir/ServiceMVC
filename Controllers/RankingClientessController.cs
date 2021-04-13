@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
+using ReflectionIT.Mvc.Paging;
 using ServiceMVC.Data;
 using ServiceMVC.Models;
 
 namespace ServiceMVC.Controllers
 {
+    [Authorize]
     public class RankingClientessController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,10 +24,36 @@ namespace ServiceMVC.Controllers
         }
 
         // GET: RankingClientess
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string filter, int page = 1, string sortExpression = "Apellido")
         {
-            var applicationDbContext = _context.RankingClientess.Include(r => r.Cliente).Where(r => r.Cliente.Status == true).OrderByDescending(r => r.TotalServicios);
-            return View(await applicationDbContext.ToListAsync());
+            var serviciosClientes = await (from usr in _context.Servicios
+                                           select new
+                                           {
+                                               ClienteID = usr.ClienteID,
+                                               Cliente = usr.Cliente,
+                                               TotalServicios = usr.Finalizado
+                                           }).ToListAsync();
+
+            List<RankingClientes> rankinclientes = (from srv in serviciosClientes
+                                                          group srv by  srv.ClienteID into rnk
+                                  select new RankingClientes()
+                                  {
+                                      RankingClientesID = Guid.NewGuid(),
+                                      ClienteID = rnk.Key,
+                                      Cliente = rnk.Select(c => c.Cliente).FirstOrDefault(),
+                                      TotalServicios = rnk.Where(c => c.TotalServicios == true).Count()
+                                  }).ToList();
+
+            if (!string.IsNullOrEmpty(filter))
+            {
+                rankinclientes = rankinclientes.Where(p => p.Cliente.ApellidoNombre.Contains(filter)).ToList();
+            }
+
+            var ranking = PagingList.Create(rankinclientes.AsQueryable(), 10, page, sortExpression, "Solucionados");
+
+            ranking.RouteValue = new RouteValueDictionary { { "Filter", filter } };
+
+            return View(ranking);
         }
 
         // GET: RankingClientess/Details/5

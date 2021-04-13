@@ -16,7 +16,7 @@ $(document).ready(function () {
 
 });
 
-$(".btnEquipos").click(function(eve) {
+$(".btnEquipos").click(function (eve) {
     $('#modal-content-personalizado').load("/Equipos/CreatePartial/" + $(this).data("id"));
 });
 
@@ -24,23 +24,24 @@ $(".btnLoadModal").click(function (eve) {
     $('#modal-content-personalizado').load($(this).data("id"));
 });
 
-//$(function () {
+$(document).ready(function () {
+    $(".autocomplete").change({
+        source: function (request, response) {
+            $.ajax({
+                url: $(".autocomplete").data("id"),
+                type: "GET",
+                dataType: "json",
+                data: { Prefix: request.term },
+                success: function (data) {
+                    response($.map(data, function (item) {
+                        return { label: item.descripcion, value: item.descripcion };
+                    }))
 
-//    $("#ProblemaID").change(function () {
-//        fillCombo("DiagnosticoID", $("#ProblemaID").val());
-//    });
-
-//});
-
-//function fillCombo(updateId, value) {
-//    $.getJSON("ProbDiagSoles/ProblemaChange"
-//        + "/" + value,
-//        function (data) {
-//            $("#" + updateId).empty();
-//            $.each(data, function (i, item) {
-//                $("#" + updateId).append("<option  value='"
-//                    + item.diagnosticoID + "'>" + item.descripcion
-//                    + "</option >");
-//            });
-//        });
-//}
+                }
+            })
+        },
+        messages: {
+            noResults: "", results: ""
+        }
+    })
+});

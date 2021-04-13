@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using ServiceMVC.Models;
 
 namespace ServiceMVC.Controllers
 {
+    [Authorize]
     public class ProbDiagSolesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -51,13 +53,13 @@ namespace ServiceMVC.Controllers
             ViewBag.TotalDiags = applicationDbContext.Where(p => p.Diagnostico != null).Count();
             ViewBag.TotalSoles = applicationDbContext.Where(p => p.Solucion != null).Count();
 
-            if (!applicationDbContext.Select(p => p.Problema).Any())
+            if (!_context.ServxUsuarios.Select(p => p.ServicioID == id).Any())
             {
-                ViewBag.Title = "Completal Alta";
+                ViewBag.Title = "Servicios";
             }
             else
             {
-                ViewBag.Title = "Procesar Servicio";
+                ViewBag.Title = "Mis Servicio";
             }
 
             return View(applicationDbContext);
@@ -163,6 +165,7 @@ namespace ServiceMVC.Controllers
         public IActionResult ProblemaChange(Guid id)
         {
             var diagnosticos = _context.ProbxDiags.Where(p => p.ProblemaID == id).Select(p => p.Diagnostico);
+
             return Json(diagnosticos);
         }
 
